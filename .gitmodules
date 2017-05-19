@@ -1,0 +1,3 @@
+[submodule "deps/asn1c"]
+	path = deps/asn1c
+	url = https://github.com/vlm/asn1c.git
