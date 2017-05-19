@@ -1,12 +1,18 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.3)
 
 project (asn1cpp)
+
+set(ASN_OPTIONS -fwide-types -gen-PER)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 # Add library directories
 include_directories(${PROJECT_SOURCE_DIR}/include)
+
+if (NOT DEFINED MAKE_TESTS)
+    set(MAKE_TESTS 1)
+endif()
 
 # If enabled, add tests
 if (MAKE_TESTS)

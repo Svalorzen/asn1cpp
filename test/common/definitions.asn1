@@ -1,0 +1,8 @@
+TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+    TestInteger ::= SEQUENCE
+    {
+        integer             INTEGER
+    }
+
+END
