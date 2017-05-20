@@ -5,4 +5,16 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
         integer             INTEGER
     }
 
+    TestBoolean ::= SEQUENCE
+    {
+        boolean             BOOLEAN
+    }
+
+    TestNestedInteger ::= SEQUENCE
+    {
+        first               INTEGER,
+        nested              TestInteger,
+        last                INTEGER
+    }
+
 END

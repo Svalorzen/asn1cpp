@@ -8,6 +8,10 @@
 #include "asn1cpp/Seq.hpp"
 
 namespace asn1cpp {
+    namespace Impl {
+        template <typename T, typename Check>
+        struct Setter;
+    }
     template <typename T>
     class View {
         public:
@@ -35,6 +39,11 @@ namespace asn1cpp {
             template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
             static void swap(S<T> & lhs, View & rhs);
         private:
+            View(T * p);
+
+            template <typename Check>
+            friend struct Impl::Setter;
+
             T * seq_;
             asn_TYPE_descriptor_t * def_;
     };
@@ -51,6 +60,9 @@ namespace asn1cpp {
 
     template <typename T>
     View<T>::View() : seq_(nullptr), def_(nullptr) {}
+
+    template <typename T>
+    View<T>::View(T * seq) : seq_(seq), def_(nullptr) {}
 
     template <typename T>
     View<T> & View<T>::operator=(Seq<T> other) {
@@ -73,7 +85,14 @@ namespace asn1cpp {
     void View<T>::swap(S<T> & lhs, View & rhs) {
         swap(rhs, lhs);
     }
+
+    template <typename T>
+    View<T> makeView(asn_TYPE_descriptor_t * def, T * seq) {
+        return View<T>(def, seq);
+    }
 }
 
+#define makeView(T, m) \
+    makeView<T>(&ASN1CPP_ASN1C_DEF(T), m)
 
 #endif
