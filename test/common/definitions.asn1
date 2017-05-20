@@ -24,7 +24,7 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
     TestEnum ::= SEQUENCE
     {
-        enum                TestEnumType
+        enm                 TestEnumType
     }
 
     TestNested ::= SEQUENCE

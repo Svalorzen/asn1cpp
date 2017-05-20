@@ -116,14 +116,19 @@ namespace asn1cpp {
     }
 
     template <typename R, typename T>
-    R get(const T *& field, bool * ok = nullptr) {
+    R get(const T * const & field, bool * ok = nullptr) {
         if (field) {
             bool iok;
             return Impl::Getter<R, T>()(field, ok ? *ok : iok);
         } else {
-            if (ok) *ok = true;
+            if (ok) *ok = false;
             return R();
         }
+    }
+
+    template <typename R, typename T>
+    R get(T * const & field, bool * ok = nullptr) {
+        return get<R>(const_cast<const T *>(field), ok);
     }
 
     template <typename T>

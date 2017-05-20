@@ -82,7 +82,7 @@ namespace asn1cpp {
     template <typename F, typename V>
     bool set(F *& field, const V & value) {
         if (!field) field = new F();
-        return Impl::Setter<F>()(&field, value);
+        return Impl::Setter<F>()(field, value);
     }
 
     template <typename F>
