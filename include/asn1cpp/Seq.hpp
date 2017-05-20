@@ -2,10 +2,24 @@
 #define ASN1CPP_SEQ_HEADER_FILE
 
 #include <stdexcept>
+#include <type_traits>
 
 #include "asn_application.h"
 
+#include "asn1cpp/Utils.hpp"
+
 namespace asn1cpp {
+    template <typename T>
+    class Seq;
+
+    namespace ber {
+        template <typename T, typename = typename std::enable_if<is_asn1_wrapper<T>::value>::type>
+        std::string encode(const T & m);
+
+        template <typename T>
+        Seq<T> decode(asn_TYPE_descriptor_t * def, const std::string & buffer);
+    }
+
     /**
      * @brief This class wraps a s
      */
@@ -22,8 +36,10 @@ namespace asn1cpp {
 
             Seq(const Seq & other);
 
-            template <template <typename> class S, typename R> // typename = typename std::enable_if<is_asn0_wrapper<S>::value>::type
-            Seq(const S<R> & other);
+            Seq & operator=(Seq other);
+
+            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
+            Seq(const S<T> & other);
 
             T & operator*();
             const T & operator*() const;
@@ -33,22 +49,29 @@ namespace asn1cpp {
             operator bool() const;
 
             asn_TYPE_descriptor_t * getTypeDescriptor() const;
+
         private:
+            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
+            void deepCopy(const S<T> & other);
+
             T * seq_;
             asn_TYPE_descriptor_t * def_;
     };
 
     template <typename T>
     Seq<T>::Seq(asn_TYPE_descriptor_t * def, T * p) :
-            seq_(p), def_(def) {}
+            seq_(p), def_(def)
+    {
+        if (seq_ && !def_)
+            throw std::runtime_error("Cannot build non-empty Seq with no ASN descriptors!");
+    }
 
     template <typename T>
     Seq<T>::Seq() : Seq(nullptr, nullptr) {}
 
     template <typename T>
-    Seq<T>::Seq(asn_TYPE_descriptor_t * def) : def_(def) {
-        seq_ = new T();
-    }
+    Seq<T>::Seq(asn_TYPE_descriptor_t * def) :
+            seq_(new T()), def_(def) {}
 
     template <typename T>
     Seq<T>::~Seq() {
@@ -57,7 +80,21 @@ namespace asn1cpp {
     }
 
     template <typename T>
-    Seq<T>::Seq(const Seq &) {}
+    Seq<T>::Seq(const Seq & other)  {
+        deepCopy(other);
+    }
+
+    template <typename T>
+    template <template <typename> class S, typename>
+    Seq<T>::Seq(const S<T> & other) {
+        deepCopy(other);
+    }
+
+    template <typename T>
+    Seq<T> & Seq<T>::operator=(Seq other) {
+        std::swap(*this, other);
+        return *this;
+    }
 
     template <typename T>
     asn_TYPE_descriptor_t * Seq<T>::getTypeDescriptor() const {
@@ -93,15 +130,34 @@ namespace asn1cpp {
         return seq_;
     }
 
-    template <typename T, template <typename> class S> // typename = typename std::enable_if<is_asn1_wrapper<S>::value>::type
+    template <typename T, template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
     bool operator==(const Seq<T> &lhs, const S<T> &rhs) {
-        return true; //Asn1::Ber::encodeWrapper(lhs) == Asn1::Ber::encodeWrapper(rhs);
+        return ber::encode(lhs) == ber::encode(rhs);
     }
 
-    template <typename T, template <typename> class S> // typename = typename std::enable_if<is_asn1_wrapper<S>::value>::type
+    template <typename T, template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
     bool operator!=(const Seq<T> &lhs, const S<T> &rhs) {
         return !(lhs == rhs);
     }
+
+    template <typename T>
+    template <template <typename> class S, typename>
+    void Seq<T>::deepCopy(const S<T> & other) {
+        if (other.seq_ && other.def_) {
+            *this = ber::decode<T>(other.def_, ber::encode(other));
+        } else {
+            seq_ = nullptr;
+            def_ = other.def_;
+        }
+    }
+
+    template <typename T>
+    Seq<T> makeSeq(asn_TYPE_descriptor_t * def) {
+        return Seq<T>(def);
+    }
 }
+
+#define makeSeq(T) \
+    makeSeq<T>(&ASN1CPP_ASN1C_DEF(T))
 
 #endif
