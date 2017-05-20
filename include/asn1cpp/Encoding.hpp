@@ -80,7 +80,7 @@ namespace asn1cpp {
     }
 }
 
-#define decode(T, m) \
-    decode(&ASN1CPP_ASN1C_DEF(T), m)
+#define decode(m, T) \
+    decode<T>(&ASN1CPP_ASN1C_DEF(T), m)
 
 #endif
