@@ -10,11 +10,33 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
         boolean             BOOLEAN
     }
 
-    TestNestedInteger ::= SEQUENCE
+    TestPrintableString ::= SEQUENCE
     {
-        first               INTEGER,
-        nested              TestInteger,
-        last                INTEGER
+        string              PrintableString
+    }
+
+    TestEnumType ::= ENUMERATED
+    {
+        value0              (0),
+        value1              (1),
+        value2              (2)
+    }
+
+    TestEnum ::= SEQUENCE
+    {
+        enum                TestEnumType
+    }
+
+    TestNested ::= SEQUENCE
+    {
+        nested              TestInteger
+    }
+
+    TestOptional ::= SEQUENCE
+    {
+        integer             INTEGER OPTIONAL,
+        string              PrintableString OPTIONAL,
+        boolean             BOOLEAN OPTIONAL
     }
 
 END

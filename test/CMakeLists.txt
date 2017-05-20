@@ -49,3 +49,5 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 SetupSuite(common)
 AddTest(common int)
+AddTest(common bool)
+AddTest(common string)
