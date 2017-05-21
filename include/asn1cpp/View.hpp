@@ -100,7 +100,7 @@ namespace asn1cpp {
 
     template <typename T>
     View<T> & View<T>::operator=(Seq<T> other) {
-        std::swap(*this, other);
+        swap(*this, other);
         return *this;
     }
 
