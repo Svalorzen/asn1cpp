@@ -42,3 +42,18 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     BOOST_CHECK_EQUAL(value, v);
 }
+
+BOOST_AUTO_TEST_CASE( copy ) {
+    const std::string value = "asdfgh";
+
+    auto test = asn1cpp::makeSeq(TestPrintableString);
+
+    asn1cpp::set(test->string, value);
+
+    auto copy = asn1cpp::Seq<TestPrintableString>(test);
+
+    auto v = asn1cpp::get(copy->string, std::string);
+
+    BOOST_CHECK_EQUAL(value, v);
+    BOOST_CHECK_EQUAL(test, copy);
+}

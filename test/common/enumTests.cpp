@@ -42,3 +42,18 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     BOOST_CHECK_EQUAL(value, v);
 }
+
+BOOST_AUTO_TEST_CASE( copy ) {
+    constexpr TestEnumType value = TestEnumType_value1;
+
+    auto test = asn1cpp::makeSeq(TestEnum);
+
+    asn1cpp::set(test->enm, value);
+
+    auto copy = asn1cpp::Seq<TestEnum>(test);
+
+    auto v = asn1cpp::get(copy->enm, TestEnumType);
+
+    BOOST_CHECK_EQUAL(value, v);
+    BOOST_CHECK_EQUAL(test, copy);
+}

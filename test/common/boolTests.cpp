@@ -42,3 +42,18 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     BOOST_CHECK_EQUAL(value, v);
 }
+
+BOOST_AUTO_TEST_CASE( copy ) {
+    constexpr bool value = true;
+
+    auto test = asn1cpp::makeSeq(TestBoolean);
+
+    asn1cpp::set(test->boolean, value);
+
+    auto copy = asn1cpp::Seq<TestBoolean>(test);
+
+    auto v = asn1cpp::get(copy->boolean, bool);
+
+    BOOST_CHECK_EQUAL(value, v);
+    BOOST_CHECK_EQUAL(test, copy);
+}

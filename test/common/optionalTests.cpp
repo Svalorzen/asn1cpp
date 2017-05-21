@@ -87,3 +87,26 @@ BOOST_AUTO_TEST_CASE( encoding ) {
     BOOST_CHECK_EQUAL(str, vstr);
     BOOST_CHECK_EQUAL(boolean, vbool);
 }
+
+BOOST_AUTO_TEST_CASE( copy ) {
+    const std::string str = "lkjhgf";
+    constexpr unsigned integer = 9571;
+    constexpr bool boolean = true;
+
+    auto test = asn1cpp::makeSeq(TestOptional);
+
+    asn1cpp::set(test->string, str);
+    asn1cpp::set(test->integer, integer);
+    asn1cpp::set(test->boolean, boolean);
+
+    auto copy = asn1cpp::Seq<TestOptional>(test);
+
+    auto vstr = asn1cpp::get(copy->string, std::string);
+    auto vint = asn1cpp::get(copy->integer, unsigned);
+    auto vbool = asn1cpp::get(copy->boolean, bool);
+
+    BOOST_CHECK_EQUAL(str, vstr);
+    BOOST_CHECK_EQUAL(integer, vint);
+    BOOST_CHECK_EQUAL(boolean, vbool);
+    BOOST_CHECK_EQUAL(test, copy);
+}

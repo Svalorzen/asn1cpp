@@ -42,3 +42,18 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     BOOST_CHECK_EQUAL(value, v);
 }
+
+BOOST_AUTO_TEST_CASE( copy ) {
+    constexpr int value = 5;
+
+    auto test = asn1cpp::makeSeq(TestInteger);
+
+    asn1cpp::set(test->integer, value);
+
+    auto copy = asn1cpp::Seq<TestInteger>(test);
+
+    auto v = asn1cpp::get(copy->integer, int);
+
+    BOOST_CHECK_EQUAL(value, v);
+    BOOST_CHECK_EQUAL(test, copy);
+}
