@@ -41,7 +41,13 @@ make
 This will build all the tests. To run the tests, run:
 
 ```
-ctest
+ctest -V
 ```
 
 from the `build` folder you have created.
+
+To run the tests with `valgrind`, run:
+
+```
+ctest -D ExperimentalMemCheck -V
+```
