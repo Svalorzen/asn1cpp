@@ -92,7 +92,7 @@ namespace asn1cpp {
     }
 }
 
-#define makeView(T, m) \
+#define makeView(m, T) \
     makeView<T>(&ASN1CPP_ASN1C_DEF(T), m)
 
 #endif
