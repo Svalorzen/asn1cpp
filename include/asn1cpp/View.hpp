@@ -65,6 +65,40 @@ namespace asn1cpp {
     View<T>::View(T * seq) : seq_(seq), def_(nullptr) {}
 
     template <typename T>
+    asn_TYPE_descriptor_t * View<T>::getTypeDescriptor() const {
+        return def_;
+    }
+
+    template <typename T>
+    View<T>::operator bool() const {
+        return seq_;
+    }
+
+    template <typename T>
+    T & View<T>::operator*() {
+        if (!seq_)
+            throw std::runtime_error("Cannot dereference null pointer");
+        return *seq_;
+    }
+
+    template <typename T>
+    const T & View<T>::operator*() const {
+        if (!seq_)
+            throw std::runtime_error("Cannot dereference null pointer");
+        return *seq_;
+    }
+
+    template <typename T>
+    T * View<T>::operator->() {
+        return seq_;
+    }
+
+    template <typename T>
+    const T * View<T>::operator->() const {
+        return seq_;
+    }
+
+    template <typename T>
     View<T> & View<T>::operator=(Seq<T> other) {
         std::swap(*this, other);
         return *this;

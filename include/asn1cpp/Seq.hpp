@@ -51,6 +51,8 @@ namespace asn1cpp {
 
             asn_TYPE_descriptor_t * getTypeDescriptor() const;
 
+            static void swap(Seq & lhs, Seq & rhs);
+
         private:
             template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
             void deepCopy(const S<T> & other);
@@ -85,7 +87,7 @@ namespace asn1cpp {
     }
 
     template <typename T>
-    Seq<T>::Seq(const Seq & other)  {
+    Seq<T>::Seq(const Seq & other) {
         deepCopy(other);
     }
 
@@ -97,7 +99,7 @@ namespace asn1cpp {
 
     template <typename T>
     Seq<T> & Seq<T>::operator=(Seq other) {
-        std::swap(*this, other);
+        swap(*this, other);
         return *this;
     }
 
@@ -146,13 +148,23 @@ namespace asn1cpp {
     }
 
     template <typename T>
+    void Seq<T>::swap(Seq & lhs, Seq & rhs) {
+        std::swap(lhs.seq_, rhs.seq_);
+        std::swap(lhs.def_, rhs.def_);
+    }
+
+    template <typename T>
     template <template <typename> class S, typename>
     void Seq<T>::deepCopy(const S<T> & other) {
-        if (other.seq_ && other.def_) {
-            *this = ber::decode<T>(other.def_, ber::encode(other));
+        // Note: in here we haven't been built yet so we can't use our own
+        // data. We also have to set seq_ to nullptr so that the swap happening
+        // during the assignment won't cause a Seq<T> to try to delete an
+        // uninitialized pointer.
+        seq_ = nullptr;
+        if (other && other.getTypeDescriptor()) {
+            *this = ber::decode<T>(other.getTypeDescriptor(), ber::encode(other));
         } else {
-            seq_ = nullptr;
-            def_ = other.def_;
+            def_ = other.getTypeDescriptor();
         }
     }
 
