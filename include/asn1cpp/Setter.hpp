@@ -81,7 +81,7 @@ namespace asn1cpp {
 
     template <typename F, typename V>
     bool set(F *& field, const V & value) {
-        if (!field) field = new F();
+        if (!field) field = static_cast<F*>(calloc(1, sizeof(F)));
         return Impl::Setter<F>()(field, value);
     }
 

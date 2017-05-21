@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <type_traits>
+#include <cstdlib>
 
 #include "asn_application.h"
 
@@ -71,7 +72,11 @@ namespace asn1cpp {
 
     template <typename T>
     Seq<T>::Seq(asn_TYPE_descriptor_t * def) :
-            seq_(new T()), def_(def) {}
+            seq_(static_cast<T*>(calloc(1, sizeof(T)))), def_(def)
+    {
+        if (!seq_)
+            throw std::runtime_error("Allocation for Seq failed!");
+    }
 
     template <typename T>
     Seq<T>::~Seq() {
