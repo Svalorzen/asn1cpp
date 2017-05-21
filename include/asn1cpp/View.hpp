@@ -87,8 +87,8 @@ namespace asn1cpp {
     }
 
     template <typename T>
-    View<T> makeView(asn_TYPE_descriptor_t * def, T * seq) {
-        return View<T>(def, seq);
+    View<T> makeView(asn_TYPE_descriptor_t * def, T & seq) {
+        return View<T>(def, &seq);
     }
 }
 
