@@ -2,6 +2,12 @@ cmake_minimum_required (VERSION 3.3)
 
 project (asn1cpp)
 
+add_definitions(
+    -std=c++11
+    -Wall
+    -Wextra
+)
+
 set(ASN_OPTIONS -fwide-types -gen-PER)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
