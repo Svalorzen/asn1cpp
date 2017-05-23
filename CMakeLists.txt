@@ -22,6 +22,9 @@ endif()
 
 # If enabled, add tests
 if (MAKE_TESTS)
+    if (NOT EXISTS ${PROJECT_SOURCE_DIR}/deps/asn1c/.git)
+        message(FATAL_ERROR "Asn1c repo not initialized, did you run 'git submodule init; git submodule update'?")
+    endif()
     # Add and compile asn1c
     include(ExternalProject)
     ExternalProject_Add(asn1c
