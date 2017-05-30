@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE( view_assignment ) {
     constexpr unsigned value = 44;
     auto test = asn1cpp::makeSeq(TestNested);
 
-    auto view = asn1cpp::makeView(test->nested, TestInteger);
+    auto view = asn1cpp::getView(test->nested, TestInteger);
 
     asn1cpp::setField(view->integer, value);
 
@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE( view_copy ) {
     constexpr unsigned value = 44;
     auto test = asn1cpp::makeSeq(TestNested);
 
-    auto view = asn1cpp::makeView(test->nested, TestInteger);
+    auto view = asn1cpp::getView(test->nested, TestInteger);
 
     asn1cpp::setField(view->integer, value);
 
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE( to_view_assignment ) {
     constexpr unsigned value = 897;
     auto test = asn1cpp::makeSeq(TestNested);
 
-    auto view = asn1cpp::makeView(test->nested, TestInteger);
+    auto view = asn1cpp::getView(test->nested, TestInteger);
 
     asn1cpp::setField(view->integer, value);
 

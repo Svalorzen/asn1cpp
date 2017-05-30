@@ -107,6 +107,14 @@ namespace asn1cpp {
                 return Seq<T>(View<T>(def, field));
             }
         };
+
+        template <typename T>
+        struct Getter<View<T>, T> {
+            View<T> operator()(T * field, asn_TYPE_descriptor_t * def, bool & ok) {
+                ok = true;
+                return View<T>(def, field);
+            }
+        };
     }
 
     template <typename R, typename T>
@@ -134,13 +142,13 @@ namespace asn1cpp {
     template <typename T>
     Seq<T> getterSeq(const T & field, asn_TYPE_descriptor_t * def, bool * ok = nullptr) {
         bool iok;
-        return Impl::Getter<Seq<T>, T>()(&field, def, ok ? ok : &iok);
+        return Impl::Getter<Seq<T>, T>()(&field, def, ok ? *ok : iok);
     }
 
     template <typename T>
     View<T> getterView(T & field, asn_TYPE_descriptor_t * def, bool * ok = nullptr) {
         bool iok;
-        return Impl::Getter<View<T>, T>()(&field, def, ok ? ok : &iok);
+        return Impl::Getter<View<T>, T>()(&field, def, ok ? *ok : iok);
     }
 }
 

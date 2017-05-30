@@ -119,14 +119,6 @@ namespace asn1cpp {
     void View<T>::swap(S<T> & lhs, View & rhs) {
         swap(rhs, lhs);
     }
-
-    template <typename T>
-    View<T> makeView(asn_TYPE_descriptor_t * def, T & seq) {
-        return View<T>(def, &seq);
-    }
 }
-
-#define makeView(m, T) \
-    makeView<T>(&ASN1CPP_ASN1C_DEF(T), m)
 
 #endif
