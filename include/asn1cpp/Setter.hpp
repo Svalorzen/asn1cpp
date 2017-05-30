@@ -47,11 +47,9 @@ namespace asn1cpp {
             bool operator()(INTEGER_t * field, long value) {
                 return asn_long2INTEGER(field, value) == 0;
             }
-
             bool operator()(INTEGER_t * field, int value) {
                 return operator()(field, static_cast<long>(value));
             }
-
             bool operator()(INTEGER_t * field, unsigned long value) {
                 return asn_ulong2INTEGER(field, value) == 0;
             }
@@ -86,7 +84,7 @@ namespace asn1cpp {
     }
 
     template <typename F>
-    bool clearedField(F *& field, asn_TYPE_descriptor_t * def) {
+    bool clearerField(F *& field, asn_TYPE_descriptor_t * def) {
         if (field) {
             def->free_struct(def, field, 0);
             field = nullptr;

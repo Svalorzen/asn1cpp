@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE( copy ) {
     asn1cpp::setField(test->integer, integer);
     asn1cpp::setField(test->boolean, boolean);
 
-    auto copy = asn1cpp::Seq<TestOptional>(test);
+    auto copy = test;
 
     auto vstr = asn1cpp::getField(copy->string, std::string);
     auto vint = asn1cpp::getField(copy->integer, unsigned);
@@ -109,4 +109,47 @@ BOOST_AUTO_TEST_CASE( copy ) {
     BOOST_CHECK_EQUAL(integer, vint);
     BOOST_CHECK_EQUAL(boolean, vbool);
     BOOST_CHECK_EQUAL(test, copy);
+
+    asn1cpp::setField(copy->string, "ooooo");
+    BOOST_CHECK(test != copy);
+}
+
+BOOST_AUTO_TEST_CASE( clear ) {
+    const std::string str = "abcd";
+    constexpr unsigned integer = 98;
+    constexpr bool boolean = false;
+
+    auto test = asn1cpp::makeSeq(TestOptional);
+
+    asn1cpp::setField(test->string, str);
+    asn1cpp::setField(test->integer, integer);
+    asn1cpp::setField(test->boolean, boolean);
+
+    bool strOk;
+    bool intOk;
+    bool boolOk;
+
+    auto vstr = asn1cpp::getField(test->string, std::string, &strOk);
+    auto vint = asn1cpp::getField(test->integer, unsigned, &intOk);
+    auto vbool = asn1cpp::getField(test->boolean, bool, &boolOk);
+
+    BOOST_CHECK(strOk);
+    BOOST_CHECK(intOk);
+    BOOST_CHECK(boolOk);
+
+    BOOST_CHECK_EQUAL(str, vstr);
+    BOOST_CHECK_EQUAL(integer, vint);
+    BOOST_CHECK_EQUAL(boolean, vbool);
+
+    asn1cpp::clrField(test->string, OCTET_STRING);
+    asn1cpp::clrField(test->integer, INTEGER);
+    asn1cpp::clrField(test->boolean, BOOLEAN);
+
+    asn1cpp::getField(test->string, std::string, &strOk);
+    asn1cpp::getField(test->integer, unsigned, &intOk);
+    asn1cpp::getField(test->boolean, bool, &boolOk);
+
+    BOOST_CHECK(!strOk);
+    BOOST_CHECK(!intOk);
+    BOOST_CHECK(!boolOk);
 }
