@@ -75,18 +75,18 @@ namespace asn1cpp {
     }
 
     template <typename F, typename V>
-    bool set(F & field, const V & value) {
+    bool setterField(F & field, const V & value) {
         return Impl::Setter<F>()(&field, value);
     }
 
     template <typename F, typename V>
-    bool set(F *& field, const V & value) {
+    bool setterField(F *& field, const V & value) {
         if (!field) field = static_cast<F*>(calloc(1, sizeof(F)));
         return Impl::Setter<F>()(field, value);
     }
 
     template <typename F>
-    bool clr(F *& field, asn_TYPE_descriptor_t * def) {
+    bool clearedField(F *& field, asn_TYPE_descriptor_t * def) {
         if (field) {
             def->free_struct(def, field, 0);
             field = nullptr;
@@ -95,7 +95,10 @@ namespace asn1cpp {
     }
 }
 
-#define clr(field, T) \
-    clr(field, &ASN1CPP_ASN1C_DEF(T))
+#define setField(field, V) \
+    setterField(field, V)
+
+#define clrField(field, T) \
+    clearerField(field, &ASN1CPP_ASN1C_DEF(T))
 
 #endif

@@ -21,17 +21,17 @@ BOOST_AUTO_TEST_CASE( assignment ) {
 
     auto test = asn1cpp::makeSeq(TestOptional);
 
-    asn1cpp::set(test->string, str);
-    asn1cpp::set(test->integer, integer);
-    asn1cpp::set(test->boolean, boolean);
+    asn1cpp::setField(test->string, str);
+    asn1cpp::setField(test->integer, integer);
+    asn1cpp::setField(test->boolean, boolean);
 
     bool strOk;
     bool intOk;
     bool boolOk;
 
-    auto vstr = asn1cpp::get(test->string, std::string, &strOk);
-    auto vint = asn1cpp::get(test->integer, unsigned, &intOk);
-    auto vbool = asn1cpp::get(test->boolean, bool, &boolOk);
+    auto vstr = asn1cpp::getField(test->string, std::string, &strOk);
+    auto vint = asn1cpp::getField(test->integer, unsigned, &intOk);
+    auto vbool = asn1cpp::getField(test->boolean, bool, &boolOk);
 
     BOOST_CHECK(strOk);
     BOOST_CHECK(intOk);
@@ -49,9 +49,9 @@ BOOST_AUTO_TEST_CASE( nonassignment ) {
     bool intOk;
     bool boolOk;
 
-    asn1cpp::get(test->string, std::string, &strOk);
-    asn1cpp::get(test->integer, unsigned, &intOk);
-    asn1cpp::get(test->boolean, bool, &boolOk);
+    asn1cpp::getField(test->string, std::string, &strOk);
+    asn1cpp::getField(test->integer, unsigned, &intOk);
+    asn1cpp::getField(test->boolean, bool, &boolOk);
 
     BOOST_CHECK(!strOk);
     BOOST_CHECK(!intOk);
@@ -64,8 +64,8 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     auto test = asn1cpp::makeSeq(TestOptional);
 
-    asn1cpp::set(test->string, str);
-    asn1cpp::set(test->boolean, boolean);
+    asn1cpp::setField(test->string, str);
+    asn1cpp::setField(test->boolean, boolean);
 
     auto encoded = asn1cpp::ber::encode(test);
     auto recoveredTest = asn1cpp::ber::decode(encoded, TestOptional);
@@ -76,9 +76,9 @@ BOOST_AUTO_TEST_CASE( encoding ) {
     bool intOk;
     bool boolOk;
 
-    auto vstr = asn1cpp::get(recoveredTest->string, std::string, &strOk);
-    asn1cpp::get(recoveredTest->integer, unsigned, &intOk);
-    auto vbool = asn1cpp::get(recoveredTest->boolean, bool, &boolOk);
+    auto vstr = asn1cpp::getField(recoveredTest->string, std::string, &strOk);
+    asn1cpp::getField(recoveredTest->integer, unsigned, &intOk);
+    auto vbool = asn1cpp::getField(recoveredTest->boolean, bool, &boolOk);
 
     BOOST_CHECK(strOk);
     BOOST_CHECK(!intOk);
@@ -95,15 +95,15 @@ BOOST_AUTO_TEST_CASE( copy ) {
 
     auto test = asn1cpp::makeSeq(TestOptional);
 
-    asn1cpp::set(test->string, str);
-    asn1cpp::set(test->integer, integer);
-    asn1cpp::set(test->boolean, boolean);
+    asn1cpp::setField(test->string, str);
+    asn1cpp::setField(test->integer, integer);
+    asn1cpp::setField(test->boolean, boolean);
 
     auto copy = asn1cpp::Seq<TestOptional>(test);
 
-    auto vstr = asn1cpp::get(copy->string, std::string);
-    auto vint = asn1cpp::get(copy->integer, unsigned);
-    auto vbool = asn1cpp::get(copy->boolean, bool);
+    auto vstr = asn1cpp::getField(copy->string, std::string);
+    auto vint = asn1cpp::getField(copy->integer, unsigned);
+    auto vbool = asn1cpp::getField(copy->boolean, bool);
 
     BOOST_CHECK_EQUAL(str, vstr);
     BOOST_CHECK_EQUAL(integer, vint);

@@ -19,9 +19,9 @@ BOOST_AUTO_TEST_CASE( assignment ) {
 
     auto test = asn1cpp::makeSeq(TestInteger);
 
-    asn1cpp::set(test->integer, value);
+    asn1cpp::setField(test->integer, value);
 
-    auto v = asn1cpp::get(test->integer, int);
+    auto v = asn1cpp::getField(test->integer, int);
 
     BOOST_CHECK_EQUAL(value, v);
 }
@@ -31,14 +31,14 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     auto test = asn1cpp::makeSeq(TestInteger);
 
-    asn1cpp::set(test->integer, value);
+    asn1cpp::setField(test->integer, value);
 
     auto str = asn1cpp::ber::encode(test);
     auto recoveredTest = asn1cpp::ber::decode(str, TestInteger);
 
     BOOST_CHECK(recoveredTest);
 
-    auto v = asn1cpp::get(recoveredTest->integer, int);
+    auto v = asn1cpp::getField(recoveredTest->integer, int);
 
     BOOST_CHECK_EQUAL(value, v);
 }
@@ -48,11 +48,11 @@ BOOST_AUTO_TEST_CASE( copy ) {
 
     auto test = asn1cpp::makeSeq(TestInteger);
 
-    asn1cpp::set(test->integer, value);
+    asn1cpp::setField(test->integer, value);
 
     auto copy = asn1cpp::Seq<TestInteger>(test);
 
-    auto v = asn1cpp::get(copy->integer, int);
+    auto v = asn1cpp::getField(copy->integer, int);
 
     BOOST_CHECK_EQUAL(value, v);
     BOOST_CHECK_EQUAL(test, copy);

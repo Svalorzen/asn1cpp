@@ -110,13 +110,13 @@ namespace asn1cpp {
     }
 
     template <typename R, typename T>
-    R get(const T & field, bool * ok = nullptr) {
+    R getterField(const T & field, bool * ok = nullptr) {
         bool iok;
         return Impl::Getter<R, T>()(&field, ok ? *ok : iok);
     }
 
     template <typename R, typename T>
-    R get(const T * const & field, bool * ok = nullptr) {
+    R getterField(const T * const & field, bool * ok = nullptr) {
         if (field) {
             bool iok;
             return Impl::Getter<R, T>()(field, ok ? *ok : iok);
@@ -127,30 +127,30 @@ namespace asn1cpp {
     }
 
     template <typename R, typename T>
-    R get(T * const & field, bool * ok = nullptr) {
-        return get<R>(const_cast<const T *>(field), ok);
+    R getterField(T * const & field, bool * ok = nullptr) {
+        return getterField<R>(const_cast<const T *>(field), ok);
     }
 
     template <typename T>
-    Seq<T> getSeq(const T & field, asn_TYPE_descriptor_t * def, bool * ok = nullptr) {
+    Seq<T> getterSeq(const T & field, asn_TYPE_descriptor_t * def, bool * ok = nullptr) {
         bool iok;
         return Impl::Getter<Seq<T>, T>()(&field, def, ok ? ok : &iok);
     }
 
     template <typename T>
-    View<T> getView(T & field, asn_TYPE_descriptor_t * def, bool * ok = nullptr) {
+    View<T> getterView(T & field, asn_TYPE_descriptor_t * def, bool * ok = nullptr) {
         bool iok;
         return Impl::Getter<View<T>, T>()(&field, def, ok ? ok : &iok);
     }
 }
 
-#define get(field, R, ...) \
-    get<R>(field, ## __VA_ARGS__)
+#define getField(field, R, ...) \
+    getterField<R>(field, ## __VA_ARGS__)
 
 #define getSeq(field, R, ...) \
-    getSeq(field, &ASN1CPP_ASN1C_DEF(R), ## __VA_ARGS__)
+    getterSeq(field, &ASN1CPP_ASN1C_DEF(R), ## __VA_ARGS__)
 
 #define getView(field, R, ...) \
-    getView(field, &ASN1CPP_ASN1C_DEF(R), ## __VA_ARGS__)
+    getterView(field, &ASN1CPP_ASN1C_DEF(R), ## __VA_ARGS__)
 
 #endif

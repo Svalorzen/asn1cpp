@@ -22,9 +22,9 @@ BOOST_AUTO_TEST_CASE( assignment ) {
 
     auto test = asn1cpp::makeSeq(TestNested);
 
-    asn1cpp::set(test->nested.integer, value);
+    asn1cpp::setField(test->nested.integer, value);
 
-    auto v = asn1cpp::get(test->nested.integer, unsigned);
+    auto v = asn1cpp::getField(test->nested.integer, unsigned);
 
     BOOST_CHECK_EQUAL(v, value);
 }
@@ -35,9 +35,9 @@ BOOST_AUTO_TEST_CASE( view_assignment ) {
 
     auto view = asn1cpp::makeView(test->nested, TestInteger);
 
-    asn1cpp::set(view->integer, value);
+    asn1cpp::setField(view->integer, value);
 
-    auto v = asn1cpp::get(test->nested.integer, unsigned);
+    auto v = asn1cpp::getField(test->nested.integer, unsigned);
 
     BOOST_CHECK_EQUAL(v, value);
 }
@@ -48,11 +48,11 @@ BOOST_AUTO_TEST_CASE( view_copy ) {
 
     auto view = asn1cpp::makeView(test->nested, TestInteger);
 
-    asn1cpp::set(view->integer, value);
+    asn1cpp::setField(view->integer, value);
 
     auto copy = asn1cpp::Seq<TestInteger>(view);
 
-    auto v = asn1cpp::get(copy->integer, unsigned);
+    auto v = asn1cpp::getField(copy->integer, unsigned);
 
     BOOST_CHECK_EQUAL(v, value);
     BOOST_CHECK_EQUAL(view, copy);
@@ -64,19 +64,19 @@ BOOST_AUTO_TEST_CASE( to_view_assignment ) {
 
     auto view = asn1cpp::makeView(test->nested, TestInteger);
 
-    asn1cpp::set(view->integer, value);
+    asn1cpp::setField(view->integer, value);
 
-    auto v = asn1cpp::get(test->nested.integer, unsigned);
+    auto v = asn1cpp::getField(test->nested.integer, unsigned);
 
     BOOST_CHECK_EQUAL(v, value);
 
     constexpr unsigned otherValue = 777;
     auto other = asn1cpp::makeSeq(TestInteger);
-    asn1cpp::set(other->integer, otherValue);
+    asn1cpp::setField(other->integer, otherValue);
 
     view = other;
-    auto vv = asn1cpp::get(test->nested.integer, unsigned);
-    auto otherv = asn1cpp::get(other->integer, unsigned);
+    auto vv = asn1cpp::getField(test->nested.integer, unsigned);
+    auto otherv = asn1cpp::getField(other->integer, unsigned);
 
     BOOST_CHECK_EQUAL(vv, otherValue);
     BOOST_CHECK_EQUAL(otherv, otherValue);
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE( encoding ) {
     constexpr unsigned value = 98;
     auto test = asn1cpp::makeSeq(TestNested);
 
-    asn1cpp::set(test->nested.integer, value);
+    asn1cpp::setField(test->nested.integer, value);
 
     auto str = asn1cpp::ber::encode(test);
     auto recoveredTest = asn1cpp::ber::decode(str, TestNested);

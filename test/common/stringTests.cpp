@@ -19,9 +19,9 @@ BOOST_AUTO_TEST_CASE( assignment ) {
 
     auto test = asn1cpp::makeSeq(TestPrintableString);
 
-    asn1cpp::set(test->string, value);
+    asn1cpp::setField(test->string, value);
 
-    auto v = asn1cpp::get(test->string, std::string);
+    auto v = asn1cpp::getField(test->string, std::string);
 
     BOOST_CHECK_EQUAL(value, v);
 }
@@ -31,14 +31,14 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     auto test = asn1cpp::makeSeq(TestPrintableString);
 
-    asn1cpp::set(test->string, value);
+    asn1cpp::setField(test->string, value);
 
     auto str = asn1cpp::ber::encode(test);
     auto recoveredTest = asn1cpp::ber::decode(str, TestPrintableString);
 
     BOOST_CHECK(recoveredTest);
 
-    auto v = asn1cpp::get(recoveredTest->string, std::string);
+    auto v = asn1cpp::getField(recoveredTest->string, std::string);
 
     BOOST_CHECK_EQUAL(value, v);
 }
@@ -48,11 +48,11 @@ BOOST_AUTO_TEST_CASE( copy ) {
 
     auto test = asn1cpp::makeSeq(TestPrintableString);
 
-    asn1cpp::set(test->string, value);
+    asn1cpp::setField(test->string, value);
 
     auto copy = asn1cpp::Seq<TestPrintableString>(test);
 
-    auto v = asn1cpp::get(copy->string, std::string);
+    auto v = asn1cpp::getField(copy->string, std::string);
 
     BOOST_CHECK_EQUAL(value, v);
     BOOST_CHECK_EQUAL(test, copy);

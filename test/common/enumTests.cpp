@@ -19,9 +19,9 @@ BOOST_AUTO_TEST_CASE( assignment ) {
 
     auto test = asn1cpp::makeSeq(TestEnum);
 
-    asn1cpp::set(test->enm, value);
+    asn1cpp::setField(test->enm, value);
 
-    auto v = asn1cpp::get(test->enm, TestEnumType);
+    auto v = asn1cpp::getField(test->enm, TestEnumType);
 
     BOOST_CHECK_EQUAL(value, v);
 }
@@ -31,14 +31,14 @@ BOOST_AUTO_TEST_CASE( encoding ) {
 
     auto test = asn1cpp::makeSeq(TestEnum);
 
-    asn1cpp::set(test->enm, value);
+    asn1cpp::setField(test->enm, value);
 
     auto str = asn1cpp::ber::encode(test);
     auto recoveredTest = asn1cpp::ber::decode(str, TestEnum);
 
     BOOST_CHECK(recoveredTest);
 
-    auto v = asn1cpp::get(recoveredTest->enm, TestEnumType);
+    auto v = asn1cpp::getField(recoveredTest->enm, TestEnumType);
 
     BOOST_CHECK_EQUAL(value, v);
 }
@@ -48,11 +48,11 @@ BOOST_AUTO_TEST_CASE( copy ) {
 
     auto test = asn1cpp::makeSeq(TestEnum);
 
-    asn1cpp::set(test->enm, value);
+    asn1cpp::setField(test->enm, value);
 
     auto copy = asn1cpp::Seq<TestEnum>(test);
 
-    auto v = asn1cpp::get(copy->enm, TestEnumType);
+    auto v = asn1cpp::getField(copy->enm, TestEnumType);
 
     BOOST_CHECK_EQUAL(value, v);
     BOOST_CHECK_EQUAL(test, copy);
