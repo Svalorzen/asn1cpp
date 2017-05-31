@@ -39,4 +39,22 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
         boolean             BOOLEAN OPTIONAL
     }
 
+    TestSequenceOf ::= SEQUENCE
+    {
+        integer             SEQUENCE OF INTEGER,
+        string              SEQUENCE OF PrintableString,
+        boolean             SEQUENCE OF BOOLEAN
+    }
+
+    -- Unfortunately even if SEQUENCE OF depends on the SET OF code, we have an
+    -- inverse dependency since the asn1 compiler does not produce the
+    -- SET_OF_encode_uper function, and we use the SEQUENCE OF one to fix this
+    -- and allow compilation of the generated sources.
+    TestSetOf ::= SEQUENCE
+    {
+        integer             SET OF INTEGER,
+        string              SET OF PrintableString,
+        boolean             SET OF BOOLEAN
+    }
+
 END

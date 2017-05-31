@@ -1,7 +1,8 @@
 cmake_minimum_required (VERSION 3.3)
 
 set(GEN_FOLDER ${PROJECT_BINARY_DIR}/gen)
-set(ASN_CMAKE ${PROJECT_SOURCE_DIR}/test/CMakeForLibs)
+set(ASN_CMAKE ${PROJECT_SOURCE_DIR}/test/build_utils/CMakeForLibs)
+set(ADDITIONAL_SOURCES ${PROJECT_SOURCE_DIR}/test/build_utils/setof_encode_uper.c)
 
 function (SetupSuite SUITE)
     set(ASN1_FILE ${PROJECT_SOURCE_DIR}/test/${SUITE}/definitions.asn1)
@@ -13,6 +14,7 @@ function (SetupSuite SUITE)
         COMMAND mkdir -p ${SUITE_FOLDER}
         COMMAND cd ${SUITE_FOLDER} && ${PROJECT_BINARY_DIR}/bin/asn1c ${ASN_OPTIONS} ${ASN1_FILE}
         COMMAND rm -f ${SUITE_FOLDER}/converter-sample.c
+        COMMAND cp ${ADDITIONAL_SOURCES} ${SUITE_FOLDER}
         COMMAND cp ${ASN_CMAKE} ${SUITE_FOLDER}/CMakeLists.txt
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS asn1c ${ASN1_FILE} ${ASN_CMAKE}
@@ -54,3 +56,4 @@ AddTest(common string)
 AddTest(common enum)
 AddTest(common optional)
 AddTest(common nested)
+AddTest(common setof)
