@@ -93,10 +93,10 @@ namespace asn1cpp {
     }
 }
 
-#define setField(field, V) \
-    setterField(field, V)
+#define setField(field, V, ...) \
+    setterField(field, V, ## __VA_ARGS__)
 
-#define clrField(field, T) \
-    clearerField(field, &ASN1CPP_ASN1C_DEF(T))
+#define clrField(field, T, ...) \
+    clearerField(field, &ASN1CPP_ASN1C_DEF(T), ## __VA_ARGS__)
 
 #endif
