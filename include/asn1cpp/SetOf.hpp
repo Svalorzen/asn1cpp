@@ -53,7 +53,7 @@ namespace asn1cpp {
             typename Impl::ArrayType<T>::type * ptr = nullptr;
             if (!asn1cpp::setterField(ptr, value))
                 return false;
-            return asn_set_add(&field, ptr);
+            return asn_set_add(&field, ptr) == 0;
         }
 
         template <typename T>
