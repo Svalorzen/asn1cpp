@@ -26,7 +26,7 @@ BOOST_AUTO_TEST_CASE( add_integer ) {
     BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[1]));
     BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[2]));
 
-    BOOST_CHECK_EQUAL(asn1cpp::setof::size(test->integer), 3);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->integer), 3);
 
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 0), values[0]);
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 1), values[1]);
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE( remove_integer ) {
     BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[1]));
     BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[2]));
 
-    BOOST_CHECK_EQUAL(asn1cpp::setof::size(test->integer), 3);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->integer), 3);
 
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 0), values[0]);
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 1), values[1]);
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE( remove_integer ) {
 
     BOOST_CHECK(asn1cpp::setof::popList(test->integer, INTEGER, 1));
 
-    BOOST_CHECK_EQUAL(asn1cpp::setof::size(test->integer), 2);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->integer), 2);
 
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 0), values[0]);
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 1), values[2]);

@@ -15,14 +15,14 @@ namespace asn1cpp {
             };
         }
         template <typename T>
-        int size(const T& field) {
+        int getSize(const T& field) {
             return field.list.count;
         }
 
         template <typename R, typename T>
         R getterField(const T& field, int id, bool *ok = nullptr)
         {
-            if (id < 0 || id > size(field)) {
+            if (id < 0 || id > getSize(field)) {
                 if (ok) *ok = false;
                 return R();
             }
@@ -33,7 +33,7 @@ namespace asn1cpp {
         template <typename T>
         Seq<typename Impl::ArrayType<T>::type> getterSeq(const T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
             using R = typename Impl::ArrayType<T>::type;
-            if (id < 0 || id > size(field)) {
+            if (id < 0 || id > getSize(field)) {
                 if (ok) *ok = false;
                 return Seq<R>();
             }
@@ -43,7 +43,7 @@ namespace asn1cpp {
 
         template <typename T, typename V>
         bool setterField(T & field, const V & value, int id) {
-            if (id < 0 || id > size(field))
+            if (id < 0 || id > getSize(field))
                 return false;
             return setterField(field.list.array[id], value);
         }
@@ -58,7 +58,7 @@ namespace asn1cpp {
 
         template <typename T>
         bool removerElement(T & field, int id, asn_TYPE_descriptor_t * def) {
-            if (id < 0 || id > size(field))
+            if (id < 0 || id > getSize(field))
                 return false;
 
             auto p = field.list.array[id];
@@ -69,7 +69,7 @@ namespace asn1cpp {
 
         template <typename T>
         void clearerField(T & field, asn_TYPE_descriptor_t * def) {
-            for (int i = 0; i < size(field); ++i)
+            for (int i = 0; i < getSize(field); ++i)
                 def->free_struct(def, field.list.array[i], 0);
             field.list.count = 0;
         }
