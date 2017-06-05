@@ -43,7 +43,8 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     {
         integer             SEQUENCE OF INTEGER,
         string              SEQUENCE OF PrintableString,
-        boolean             SEQUENCE OF BOOLEAN
+        boolean             SEQUENCE OF BOOLEAN,
+        nested              SET OF TestInteger
     }
 
     -- Unfortunately even if SEQUENCE OF depends on the SET OF code, we have an
@@ -54,7 +55,8 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     {
         integer             SET OF INTEGER,
         string              SET OF PrintableString,
-        boolean             SET OF BOOLEAN
+        boolean             SET OF BOOLEAN,
+        nested              SET OF TestInteger
     }
 
 END

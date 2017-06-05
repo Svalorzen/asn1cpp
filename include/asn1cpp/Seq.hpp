@@ -39,8 +39,9 @@ namespace asn1cpp {
 
             Seq & operator=(Seq other);
 
-            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-            Seq(const S<T> & other);
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
+            Seq(const S<Y> & other);
 
             T & operator*();
             const T & operator*() const;
@@ -54,8 +55,9 @@ namespace asn1cpp {
             static void swap(Seq & lhs, Seq & rhs);
 
         private:
-            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-            void deepCopy(const S<T> & other);
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
+            void deepCopy(const S<Y> & other);
 
             T * seq_;
             asn_TYPE_descriptor_t * def_;
@@ -92,8 +94,8 @@ namespace asn1cpp {
     }
 
     template <typename T>
-    template <template <typename> class S, typename>
-    Seq<T>::Seq(const S<T> & other) {
+    template <template <typename> class S, typename Y, typename>
+    Seq<T>::Seq(const S<Y> & other) {
         deepCopy(other);
     }
 
@@ -137,16 +139,6 @@ namespace asn1cpp {
         return seq_;
     }
 
-    template <typename T, template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-    bool operator==(const Seq<T> &lhs, const S<T> &rhs) {
-        return ber::encode(lhs) == ber::encode(rhs);
-    }
-
-    template <typename T, template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-    bool operator!=(const Seq<T> &lhs, const S<T> &rhs) {
-        return !(lhs == rhs);
-    }
-
     template <typename T>
     void Seq<T>::swap(Seq & lhs, Seq & rhs) {
         std::swap(lhs.seq_, rhs.seq_);
@@ -154,8 +146,8 @@ namespace asn1cpp {
     }
 
     template <typename T>
-    template <template <typename> class S, typename>
-    void Seq<T>::deepCopy(const S<T> & other) {
+    template <template <typename> class S, typename Y, typename>
+    void Seq<T>::deepCopy(const S<Y> & other) {
         // Note: in here we haven't been built yet so we can't use our own
         // data. We also have to set seq_ to nullptr so that the swap happening
         // during the assignment won't cause a Seq<T> to try to delete an
@@ -167,6 +159,19 @@ namespace asn1cpp {
             def_ = other.getTypeDescriptor();
         }
     }
+
+    template <typename T, template <typename> class S, typename Y,
+              typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
+    bool operator==(const Seq<T> &lhs, const S<Y> &rhs) {
+        return ber::encode(lhs) == ber::encode(rhs);
+    }
+
+    template <typename T, template <typename> class S, typename Y,
+              typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
+    bool operator!=(const Seq<T> &lhs, const S<Y> &rhs) {
+        return !(lhs == rhs);
+    }
+
 
     template <typename T>
     Seq<T> makeSeq(asn_TYPE_descriptor_t * def) {

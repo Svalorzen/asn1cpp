@@ -5,6 +5,7 @@
 
 #include "asn_application.h"
 
+#include "asn1cpp/Utils.hpp"
 #include "asn1cpp/Seq.hpp"
 
 namespace asn1cpp {
@@ -17,11 +18,16 @@ namespace asn1cpp {
         public:
             View(asn_TYPE_descriptor_t * def, T * p);
             View();
-            View(const View & other);
-            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-            View(const S<T> & other);
+            View(View & other);
+            View(View && other);
 
-            View & operator=(Seq<T> other);
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+            View(S<Y> & other);
+
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+            View & operator=(S<Y> other);
             View & operator=(const View & other);
 
             T & operator*();
@@ -33,11 +39,13 @@ namespace asn1cpp {
 
             asn_TYPE_descriptor_t * getTypeDescriptor() const;
 
-            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-            static void swap(View & lhs, S<T> & rhs);
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+            static void swap(View & lhs, S<Y> & rhs);
 
-            template <template <typename> class S, typename = typename std::enable_if<is_asn1_wrapper<S<T>>::value>::type>
-            static void swap(S<T> & lhs, View & rhs);
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+            static void swap(S<Y> & lhs, View & rhs);
         private:
             View(T * p);
 
@@ -57,6 +65,16 @@ namespace asn1cpp {
         if (!def_)
             throw std::runtime_error("Cannot build View with no ASN descriptors!");
     }
+
+    template <typename T>
+    View<T>::View(View & other) : View(other.def_, other.seq_) {}
+
+    template <typename T>
+    View<T>::View(View && other) : View(other.def_, other.seq_) {}
+
+    template <typename T>
+    template <template <typename> class S, typename Y, typename>
+    View<T>::View(S<Y> & other) : View(other.getTypeDescriptor(), &(*other)) {}
 
     template <typename T>
     View<T>::View() : seq_(nullptr), def_(nullptr) {}
@@ -99,14 +117,22 @@ namespace asn1cpp {
     }
 
     template <typename T>
-    View<T> & View<T>::operator=(Seq<T> other) {
+    template <template <typename> class S, typename Y, typename>
+    View<T> & View<T>::operator=(S<Y> other) {
         swap(*this, other);
         return *this;
     }
 
     template <typename T>
-    template <template <typename> class S, typename>
-    void View<T>::swap(View & lhs, S<T> & rhs) {
+    View<T> & View<T>::operator=(const View & other) {
+        Seq<T> copy = other;
+        swap(*this, copy);
+        return *this;
+    }
+
+    template <typename T>
+    template <template <typename> class S, typename Y, typename>
+    void View<T>::swap(View & lhs, S<Y> & rhs) {
         if (!lhs && !rhs) return;
         if (!(lhs && rhs))
             throw std::runtime_error("Cannot swap null pointers!");
@@ -114,9 +140,10 @@ namespace asn1cpp {
         *rhs = *lhs;
         *lhs = tmp;
     }
+
     template <typename T>
-    template <template <typename> class S, typename>
-    void View<T>::swap(S<T> & lhs, View & rhs) {
+    template <template <typename> class S, typename Y, typename>
+    void View<T>::swap(S<Y> & lhs, View & rhs) {
         swap(rhs, lhs);
     }
 }

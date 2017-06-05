@@ -1,6 +1,8 @@
 #ifndef ASN1CPP_UTILS_HEADER_FILE
 #define ASN1CPP_UTILS_HEADER_FILE
 
+#include <type_traits>
+
 #include "asn_application.h"
 
 // This macro is used in order to be able to access an asn1c struct definition
@@ -32,6 +34,28 @@ namespace asn1cpp {
 
         public:
             enum { value = test<W<T>>(0) };
+    };
+
+    template <typename A, typename B>
+    struct are_compatible_asn1_wrappers {
+        enum { value = false };
+    };
+
+    template <template <typename> class W, typename T,
+              template <typename> class Z, typename Y>
+    struct are_compatible_asn1_wrappers<W<T>, Z<Y>> {
+        public:
+            enum {
+                value = is_asn1_wrapper<W<T>>::value &&
+                        is_asn1_wrapper<Z<Y>>::value &&
+                        (
+                         std::is_same<T, Y> :: value ||
+                         std::is_same<
+                            T,
+                            typename std::remove_cv<Y>::type
+                         >::value
+                        )
+            };
     };
 }
 

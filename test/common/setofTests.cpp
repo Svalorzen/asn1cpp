@@ -181,3 +181,82 @@ BOOST_AUTO_TEST_CASE( clear_boolean ) {
 
     BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->boolean), 0);
 }
+
+BOOST_AUTO_TEST_CASE( add_nested ) {
+    auto insert0 = asn1cpp::makeSeq(TestInteger);
+    BOOST_CHECK(asn1cpp::setField(insert0->integer, 45));
+
+    auto seq = asn1cpp::makeSeq(TestInteger);
+    BOOST_CHECK(asn1cpp::setField(seq->integer, 23));
+    asn1cpp::View<TestInteger> insert1 = seq;
+
+    auto test = asn1cpp::makeSeq(TestSetOf);
+
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert0));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert1));
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->nested), 2);
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSeq(test->nested, TestInteger, 0), insert0);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getView(test->nested, TestInteger, 0), insert0);
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSeq(test->nested, TestInteger, 1), insert1);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getView(test->nested, TestInteger, 1), insert1);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSeq(test->nested, TestInteger, 1), seq);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getView(test->nested, TestInteger, 1), seq);
+}
+
+BOOST_AUTO_TEST_CASE( remove_nested ) {
+    constexpr std::array<int, 3> values = {{99, 202, 101}};
+    auto insert = asn1cpp::makeSeq(TestInteger);
+
+    auto test = asn1cpp::makeSeq(TestSetOf);
+
+    BOOST_CHECK(asn1cpp::setField(insert->integer, values[0]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert));
+
+    BOOST_CHECK(asn1cpp::setField(insert->integer, values[1]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert));
+
+    BOOST_CHECK(asn1cpp::setField(insert->integer, values[2]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert));
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->nested), 3);
+
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 0)->integer, int), values[0]);
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 1)->integer, int), values[1]);
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 2)->integer, int), values[2]);
+
+    BOOST_CHECK(asn1cpp::setof::popList(test->nested, TestInteger, 1));
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->nested), 2);
+
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 0)->integer, int), values[0]);
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 1)->integer, int), values[2]);
+}
+
+BOOST_AUTO_TEST_CASE( clear_nested ) {
+    constexpr std::array<int, 3> values = {{142, 798, 442}};
+    auto insert = asn1cpp::makeSeq(TestInteger);
+
+    auto test = asn1cpp::makeSeq(TestSetOf);
+
+    BOOST_CHECK(asn1cpp::setField(insert->integer, values[0]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert));
+
+    BOOST_CHECK(asn1cpp::setField(insert->integer, values[1]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert));
+
+    BOOST_CHECK(asn1cpp::setField(insert->integer, values[2]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->nested, insert));
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->nested), 3);
+
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 0)->integer, int), values[0]);
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 1)->integer, int), values[1]);
+    BOOST_CHECK_EQUAL(asn1cpp::getField(asn1cpp::setof::getView(test->nested, TestInteger, 2)->integer, int), values[2]);
+
+    asn1cpp::setof::clrField(test->nested, TestInteger);
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->nested), 0);
+}

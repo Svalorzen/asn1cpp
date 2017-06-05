@@ -14,6 +14,7 @@ namespace asn1cpp {
                 using type = typename std::remove_reference<decltype(**std::declval<T>().list.array)>::type;
             };
         }
+
         template <typename T>
         int getSize(const T& field) {
             return field.list.count;
@@ -38,7 +39,29 @@ namespace asn1cpp {
                 return Seq<R>();
             }
             bool iok;
-            return getterSeq(field.list.array[id], def, ok ? ok : &iok);
+            return asn1cpp::getterSeq(*field.list.array[id], def, ok ? ok : &iok);
+        }
+
+        template <typename T>
+        View<const typename Impl::ArrayType<T>::type> getterView(const T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
+            using R = const typename Impl::ArrayType<T>::type;
+            if (id < 0 || id > getSize(field)) {
+                if (ok) *ok = false;
+                return View<R>();
+            }
+            bool iok;
+            return asn1cpp::getterView(*field.list.array[id], def, ok ? ok : &iok);
+        }
+
+        template <typename T>
+        View<typename Impl::ArrayType<T>::type> getterView(T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
+            using R = typename Impl::ArrayType<T>::type;
+            if (id < 0 || id > getSize(field)) {
+                if (ok) *ok = false;
+                return View<R>();
+            }
+            bool iok;
+            return asn1cpp::getterView(*field.list.array[id], def, ok ? ok : &iok);
         }
 
         template <typename T, typename V>
