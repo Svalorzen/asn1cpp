@@ -51,3 +51,24 @@ To run the tests with `valgrind`, run:
 ```
 ctest -D ExperimentalMemCheck -V
 ```
+
+Documentation
+-------------
+
+The asn1cpp library is fully documented.
+
+The Doxygen documentation will export only the API of the library, so to avoid
+providing you with unnecessary text to read. To generate the Doxygen
+documentation simply run
+
+```
+doxygen
+```
+
+Within the project's folder. It will automatically create an `html` folder which
+contains the generated documentation.
+
+In order to have more information about the internals feel free to read the
+documentation in the code itself. This should be unnecessary in order to simply
+use the library, and should be needed only if you need to extend some particular
+functionality.
