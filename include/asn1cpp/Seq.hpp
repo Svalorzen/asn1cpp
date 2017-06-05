@@ -1,3 +1,4 @@
+/** @file */
 #ifndef ASN1CPP_SEQ_HEADER_FILE
 #define ASN1CPP_SEQ_HEADER_FILE
 
@@ -22,36 +23,150 @@ namespace asn1cpp {
     }
 
     /**
-     * @brief This class wraps a s
+     * @brief This class wraps an asn1c non-primitive structure.
+     *
+     * This class is used to take ownership of asn1c structures so that they
+     * can be manipulated without risking a memory leak. This class will
+     * automatically clean up after itself upon destruction.
+     *
+     * Reading/writing the underlying asn1c structures should only be done
+     * through the appropriate helper functions found in the Setter/Getter
+     * files. Avoid bypassing them and directly read stuff unless you know what
+     * you are doing.
      */
     template <typename T>
     class Seq {
         public:
+            /**
+             * @brief Basic constructor.
+             *
+             * This constructor takes ownership of the input pointer, and uses
+             * the input asn1c type descriptor to deallocate it upon
+             * destruction. The type descriptor will also be used when encoding
+             * and decoding this class.
+             *
+             * @param def The asn1c generated type descriptor for the input pointer.
+             * @param p The asn1c struct.
+             */
             Seq(asn_TYPE_descriptor_t * def, T * p);
 
+            /**
+             * @brief Null constructor.
+             *
+             * This constructor is used in order to produce a null Seq. This
+             * can be useful to notify errors when encoding/decoding/etc.
+             */
             Seq();
 
+            /**
+             * @brief New constructor.
+             *
+             * This constructor allocates the memory necessary to store the
+             * underlying type, so that it can be used with the other library
+             * functions.
+             *
+             * @param def The asn1c generated type descriptor for the stored type.
+             */
             Seq(asn_TYPE_descriptor_t * def);
 
+            /**
+             * @brief Basic destructor.
+             *
+             * This destructor destroys, if present, the owned structure
+             * pointer, using the type descriptor to correctly destroy it
+             * through asn1c functions.
+             */
             ~Seq();
 
+            /**
+             * @brief Copy constructor.
+             *
+             * This constructor creates a new copy of the input Seq, so that in
+             * the end they will both own a separate, although equivalent,
+             * copy.
+             *
+             * @param other The Seq to copy.
+             */
             Seq(const Seq & other);
 
-            Seq & operator=(Seq other);
-
+            /**
+             * @brief Copy constructor from other classes.
+             *
+             * This constructor creates a new copy of the input so that the
+             * input and this instance will compare equal afterwards.
+             *
+             * This constructor is able to work with any compatible asn1c
+             * wrappers which fulfill the wrapper API.
+             *
+             * @param other The asn1c wrapper to copy.
+             */
             template <template <typename> class S, typename Y,
                       typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
             Seq(const S<Y> & other);
 
+            /**
+             * @brief Assignment operator.
+             *
+             * This operator deallocates the currently owned asn1c structure
+             * and creates a new one from scratch which copies the input.
+             *
+             * @param other The Seq to copy.
+             *
+             * @return A reference to this instance.
+             */
+            Seq & operator=(Seq other);
+
+            /**
+             * @brief Dereference operator.
+             *
+             * @return A reference to the underlying asn1c structure.
+             */
             T & operator*();
+
+            /**
+             * @brief Const dereference operator.
+             *
+             * @return A const reference to the underlying asn1c structure.
+             */
             const T & operator*() const;
+
+            /**
+             * @brief Arrow operator.
+             *
+             * @return A pointer to the underlying asn1c structure, can be nullptr.
+             */
             T * operator->();
+
+            /**
+             * @brief Const arrow operator.
+             *
+             * @return A const pointer to the underlying asn1c structure, can be nullptr.
+             */
             const T * operator->() const;
 
+            /**
+             * @brief Whether this instance is valid or not.
+             *
+             * This operator returns whether the currently held asn1c structure
+             * is nullptr or not. Invalid structures will return false.
+             *
+             * @return True if the underlying structure is not null, false otherwise.
+             */
             operator bool() const;
 
+            /**
+             * @brief Returns the underlying asn1c type descriptor.
+             *
+             * @return The underlying asn1c type descriptor, which can be null.
+             */
             asn_TYPE_descriptor_t * getTypeDescriptor() const;
 
+            /**
+             * @brief Swaps two instances of Seq.
+             *
+             * @param lhs The left hand side.
+             * @param rhs The right hand side.
+             */
             static void swap(Seq & lhs, Seq & rhs);
 
         private:
@@ -62,6 +177,44 @@ namespace asn1cpp {
             T * seq_;
             asn_TYPE_descriptor_t * def_;
     };
+
+    /**
+     * @relates Seq
+     * @brief Equality operator between Seq and an asn1 wrapper.
+     *
+     * This function uses encoding in order to perform equality comparisons.
+     * This allows us to perform equality checks independently of the wrapped
+     * type.
+     *
+     * @param lhs The left hand side.
+     * @param rhs The right hand side.
+     *
+     * @return True if the two instances encode to the same string, false otherwise.
+     */
+    template <typename T, template <typename> class S, typename Y,
+              typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
+    bool operator==(const Seq<T> &lhs, const S<Y> &rhs) {
+        return ber::encode(lhs) == ber::encode(rhs);
+    }
+
+    /**
+     * @relates Seq
+     * @brief Inequality operator between Seq and an asn1 wrapper.
+     *
+     * \sa operator==
+     *
+     * @param lhs The left hand side.
+     * @param rhs The right hand side.
+     *
+     * @return False if the two instances encode to the same string, true otherwise.
+     */
+    template <typename T, template <typename> class S, typename Y,
+              typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
+    bool operator!=(const Seq<T> &lhs, const S<Y> &rhs) {
+        return !(lhs == rhs);
+    }
+
+    // Implementations...
 
     template <typename T>
     Seq<T>::Seq(asn_TYPE_descriptor_t * def, T * p) :
@@ -160,25 +313,24 @@ namespace asn1cpp {
         }
     }
 
-    template <typename T, template <typename> class S, typename Y,
-              typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
-    bool operator==(const Seq<T> &lhs, const S<Y> &rhs) {
-        return ber::encode(lhs) == ber::encode(rhs);
-    }
-
-    template <typename T, template <typename> class S, typename Y,
-              typename = typename std::enable_if<are_compatible_asn1_wrappers<Seq<T>, S<Y>>::value>::type>
-    bool operator!=(const Seq<T> &lhs, const S<Y> &rhs) {
-        return !(lhs == rhs);
-    }
-
-
     template <typename T>
     Seq<T> makeSeq(asn_TYPE_descriptor_t * def) {
         return Seq<T>(def);
     }
 }
 
+/**
+ * @addtogroup API
+ * @{
+ *
+ * @def makeSeq(T)
+ * @brief Creates a Seq instance for the specified type.
+ * 
+ * This macro allows specifying the name of the underlying asn1c type, and it
+ * will automatically find the appropriate asn1c type descriptor for you.
+ *
+ * @}
+ */
 #define makeSeq(T) \
     makeSeq<T>(&ASN1CPP_ASN1C_DEF(T))
 
