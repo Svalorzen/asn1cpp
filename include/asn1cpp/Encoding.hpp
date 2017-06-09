@@ -80,6 +80,36 @@ namespace asn1cpp {
     }
 }
 
+/**
+ * @page EncodingPage Encoding and Decoding with asn1cpp
+ *
+ * Encoding and decoding is done through the `encode` and `decode` functions.
+ * Note that in asn1cpp some functions are macros due to the need to
+ * automatically access the asn1c type descriptors from type names.
+ *
+ * Accessing a specific type of encoding/decoding is done through namespaces.
+ * The `ber` namespace offers access to the `encode` and `decode` functions for
+ * BER encoding, the `uper` namespaces does the same for UPER, and so on.
+ *
+ * Encoding and decoding an asn1cpp wrapper (be it a asn1cpp::Seq or a
+ * asn1cpp::View) is extremely simple. For example:
+ *
+ * ```
+ * auto s = asn1cpp::makeSeq(MyAsnType);
+ * // set fields through setField functions...
+ *
+ * // We encode the Seq, and we obtain an std::string
+ * auto enc = asn1cpp::ber::encode(s);
+ *
+ * // ...
+ * // Somewhere else, we decode
+ * auto decoded = asn1cpp::ber::decode(enc, MyAsnType);
+ * ```
+ *
+ * Note that only decoding needs the type specification, since the asn1cpp
+ * wrappers already know the type of their wrapped value.
+ */
+
 #define decode(m, T) \
     decode<T>(&ASN1CPP_ASN1C_DEF(T), m)
 
