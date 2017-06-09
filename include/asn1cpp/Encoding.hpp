@@ -20,6 +20,12 @@ namespace asn1cpp {
     }
 
     namespace ber {
+        /**
+         * @ingroup API
+         * @brief Encodes an asn1cpp wrapper to an std::string.
+         *
+         * \sa decode(m, T)
+         */
         template <typename T, typename = typename std::enable_if<is_asn1_wrapper<T>::value>::type>
         std::string encode(const T & m) {
             if (!m) return {};
@@ -45,6 +51,12 @@ namespace asn1cpp {
     }
 
     namespace xer {
+        /**
+         * @ingroup API
+         * @brief Encodes an asn1cpp wrapper to an std::string.
+         *
+         * \sa decode(m, T)
+         */
         template <typename T, typename = typename std::enable_if<is_asn1_wrapper<T>::value>::type>
         std::string encode(const T & m) {
             if (!m) return {};
@@ -55,6 +67,12 @@ namespace asn1cpp {
     }
 
     namespace uper {
+        /**
+         * @ingroup API
+         * @brief Encodes an asn1cpp wrapper to an std::string.
+         *
+         * \sa decode(m, T)
+         */
         template <typename T, typename = typename std::enable_if<is_asn1_wrapper<T>::value>::type>
         std::string encode(const T & m) {
             if (!m) return {};
@@ -85,7 +103,8 @@ namespace asn1cpp {
  *
  * Encoding and decoding is done through the `encode` and `decode` functions.
  * Note that in asn1cpp some functions are macros due to the need to
- * automatically access the asn1c type descriptors from type names.
+ * automatically access the asn1c type descriptors from type names. This may
+ * not play nice with your autocompletion features.
  *
  * Accessing a specific type of encoding/decoding is done through namespaces.
  * The `ber` namespace offers access to the `encode` and `decode` functions for
@@ -110,6 +129,18 @@ namespace asn1cpp {
  * wrappers already know the type of their wrapped value.
  */
 
+
+/**
+ * @def decode(m, T)
+ * @ingroup API
+ * @brief Decodes an std::string to an asn1cpp wrapper for the specified type.
+ *
+ * This macro must be prefixed with both the asn1cpp namespace and the
+ * namespace of the encoding you want (ber, uper, ...).
+ *
+ * This macro allows specifying the name of the underlying asn1c type, and it
+ * will automatically find the appropriate asn1c type descriptor for you.
+ */
 #define decode(m, T) \
     decode<T>(&ASN1CPP_ASN1C_DEF(T), m)
 
