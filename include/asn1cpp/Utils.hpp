@@ -48,11 +48,30 @@ namespace asn1cpp {
             enum {
                 value = is_asn1_wrapper<W<T>>::value &&
                         is_asn1_wrapper<Z<Y>>::value &&
-                        (
-                         std::is_same<T, Y> :: value ||
-                         std::is_same<
-                            T,
+                        std::is_same<
+                            typename std::remove_cv<T>::type,
                             typename std::remove_cv<Y>::type
+                        >::value
+            };
+    };
+
+    template <typename A, typename B>
+    struct is_convertible_asn1_wrapper {
+        enum { value = false };
+    };
+
+    template <template <typename> class W, typename T,
+              template <typename> class Z, typename Y>
+    struct is_convertible_asn1_wrapper<W<T>, Z<Y>> {
+        public:
+            enum {
+                value = is_asn1_wrapper<W<T>>::value &&
+                        is_asn1_wrapper<Z<Y>>::value &&
+                        (
+                         std::is_same<T, Y>::value ||
+                         std::is_same<
+                            typename std::remove_cv<T>::type,
+                            Y
                          >::value
                         )
             };

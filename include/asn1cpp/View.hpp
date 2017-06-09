@@ -20,13 +20,18 @@ namespace asn1cpp {
             View();
             View(View & other);
             View(View && other);
+            View(const View&) = delete;
 
             template <template <typename> class S, typename Y,
-                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+                      typename = typename std::enable_if<is_convertible_asn1_wrapper<View<T>, S<Y>>::value>::type>
             View(S<Y> & other);
 
             template <template <typename> class S, typename Y,
-                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+                      typename = typename std::enable_if<is_convertible_asn1_wrapper<View<T>, S<Y>>::value>::type>
+            View(S<Y> && other);
+
+            template <template <typename> class S, typename Y,
+                      typename = typename std::enable_if<is_convertible_asn1_wrapper<View<T>, S<Y>>::value>::type>
             View & operator=(S<Y> other);
             View & operator=(const View & other);
 
@@ -40,11 +45,11 @@ namespace asn1cpp {
             asn_TYPE_descriptor_t * getTypeDescriptor() const;
 
             template <template <typename> class S, typename Y,
-                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+                      typename = typename std::enable_if<is_convertible_asn1_wrapper<View<T>, S<Y>>::value>::type>
             static void swap(View & lhs, S<Y> & rhs);
 
             template <template <typename> class S, typename Y,
-                      typename = typename std::enable_if<are_compatible_asn1_wrappers<View<T>, S<Y>>::value>::type>
+                      typename = typename std::enable_if<is_convertible_asn1_wrapper<View<T>, S<Y>>::value>::type>
             static void swap(S<Y> & lhs, View & rhs);
         private:
             View(T * p);
@@ -75,6 +80,10 @@ namespace asn1cpp {
     template <typename T>
     template <template <typename> class S, typename Y, typename>
     View<T>::View(S<Y> & other) : View(other.getTypeDescriptor(), &(*other)) {}
+
+    template <typename T>
+    template <template <typename> class S, typename Y, typename>
+    View<T>::View(S<Y> && other) : View(other.getTypeDescriptor(), &(*other)) {}
 
     template <typename T>
     View<T>::View() : seq_(nullptr), def_(nullptr) {}

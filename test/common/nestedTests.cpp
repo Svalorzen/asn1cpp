@@ -3,8 +3,6 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/unit_test.hpp>
 
-#include <iostream>
-
 #include "TestNested.h"
 
 #include "asn1cpp/Seq.hpp"
@@ -56,6 +54,19 @@ BOOST_AUTO_TEST_CASE( view_copy ) {
 
     BOOST_CHECK_EQUAL(v, value);
     BOOST_CHECK_EQUAL(view, copy);
+}
+
+BOOST_AUTO_TEST_CASE( view_const ) {
+    constexpr unsigned value = 44;
+    auto test = asn1cpp::makeSeq(TestNested);
+    asn1cpp::setField(test->nested.integer, value);
+
+    asn1cpp::View<const TestInteger> view = asn1cpp::getView(test->nested, TestInteger);
+
+    auto testValue = asn1cpp::getField(test->nested.integer, unsigned);
+    auto viewValue = asn1cpp::getField(view->integer, unsigned);
+
+    BOOST_CHECK_EQUAL(testValue, viewValue);
 }
 
 BOOST_AUTO_TEST_CASE( to_view_assignment ) {
