@@ -67,6 +67,15 @@ BOOST_AUTO_TEST_CASE( view_const ) {
     auto viewValue = asn1cpp::getField(view->integer, unsigned);
 
     BOOST_CHECK_EQUAL(testValue, viewValue);
+
+    const auto const_view = asn1cpp::getView(test->nested, TestInteger);
+    asn1cpp::View<const TestInteger> internal_const_view = const_view;
+
+    auto v1 = asn1cpp::getField(const_view->integer, unsigned);
+    auto v2 = asn1cpp::getField(internal_const_view->integer, unsigned);
+
+    BOOST_CHECK_EQUAL(testValue, v1);
+    BOOST_CHECK_EQUAL(v1, v2);
 }
 
 BOOST_AUTO_TEST_CASE( to_view_assignment ) {
