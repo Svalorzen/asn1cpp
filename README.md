@@ -66,7 +66,8 @@ doxygen
 ```
 
 Within the project's folder. It will automatically create an `html` folder which
-contains the generated documentation.
+contains the generated documentation. Detailed informations on the library's
+usage can be found under the `Related Pages` section.
 
 In order to have more information about the internals feel free to read the
 documentation in the code itself. This should be unnecessary in order to simply
