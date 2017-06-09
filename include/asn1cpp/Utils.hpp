@@ -10,6 +10,17 @@
 #define ASN1CPP_ASN1C_DEF(T) asn_DEF_##T
 
 namespace asn1cpp {
+    /**
+     * @brief This struct represents whether a particular class fulfills our asn1c wrapped interface.
+     *
+     * This is used in order to enable template constructors from classes that
+     * fulfill the asn1c wrapped interface we use in this library.
+     *
+     * Note that simply implementing the interface is not a guarantee that
+     * everything will work right: if your interface breaks any invariants we
+     * assume it will break (for example, we assume that getTypeDescriptor()
+     * never returns nullptr).
+     */
     template <typename W>
     struct is_asn1_wrapper {
         enum { value = false };
@@ -36,6 +47,9 @@ namespace asn1cpp {
             enum { value = test<W<T>>(0) };
     };
 
+    /**
+     * @brief This struct represents whether two asn1 wrappers contain the same type.
+     */
     template <typename A, typename B>
     struct are_compatible_asn1_wrappers {
         enum { value = false };
@@ -55,6 +69,15 @@ namespace asn1cpp {
             };
     };
 
+    /**
+     * @brief This struct represents whether an asn1 wrapper can be converted to another.
+     *
+     * This checks whether the first input both has the same type as the second
+     * input, and that the first input is at least as const as the second.
+     *
+     * This avoids bypassing const and having non-const wrappers from const
+     * wrappers.
+     */
     template <typename A, typename B>
     struct is_convertible_asn1_wrapper {
         enum { value = false };
