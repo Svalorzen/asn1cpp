@@ -324,16 +324,20 @@ namespace asn1cpp {
 }
 
 /**
- * @addtogroup API
- * @{
+ * @defgroup API
+ * @brief Library public API
+ *
+ * This group contains all functions and macros which should be used by the
+ * user in order to correctly use the library. Note that all macros should
+ * still be prefaced by the correct namespace indicator, as they still refer
+ * to namespaced functions.
  *
  * @def makeSeq(T)
+ * @ingroup API
  * @brief Creates a Seq instance for the specified type.
  *
  * This macro allows specifying the name of the underlying asn1c type, and it
  * will automatically find the appropriate asn1c type descriptor for you.
- *
- * @}
  */
 #define makeSeq(T) \
     makeSeq<T>(&ASN1CPP_ASN1C_DEF(T))
