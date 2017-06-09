@@ -93,9 +93,121 @@ namespace asn1cpp {
     }
 }
 
+/**
+ * @page SetGetPage Setting and Getting fields with asn1cpp
+ *
+ * All functions described here can be found in the \ref API group.
+ *
+ * Note that in asn1cpp some functions are macros due to the need to
+ * automatically access the asn1c type descriptors from type names. This may
+ * not play nice with your autocompletion features.
+ *
+ * Setting Fields
+ * --------------
+ *
+ * Once a asn1cpp::Seq or asn1cpp::View is obtained, we can set the fields of
+ * the underlying struct using the `setField` function. This function accepts
+ * both C++ primitive/string values for fields containing asn1c primitive
+ * values, or asn1cpp wrappers for fields which correspond to nested
+ * structures.
+ *
+ * The `setField` function returns a `boolean` that represents whether the
+ * value was set correctly (most of the times it will be). Errors may happen
+ * due to string conversion errors, but not for mismatched types: those just
+ * won't compile.
+ *
+ * ```
+ * auto seq = asn1cpp::makeSeq(MyAsnType);
+ *
+ * asn1cpp::setField(seq->someIntegerField, 15);
+ * asn1cpp::setField(seq->someStringField, "mystring");
+ *
+ * auto nested = asn1cpp::makeSeq(MyNestedType);
+ *
+ * asn1cpp::setField(seq->nestedField, nested);
+ * ```
+ *
+ * This works for both normal and optional fields, with no difference.
+ * Additionally, an optional field can be cleared with the `clrField` function:
+ *
+ * ```
+ * asn1cpp::clrField(seq->optionalField, OptionalType);
+ * ```
+ *
+ * Note that here `OptionalType` represents the underlying asn1c type, such as
+ * `INTEGER`, `BOOLEAN`, `OCTET_STRING`. This is unavoidable as we need an
+ * indication of the asn1c type in order to free memory correctly. The correct
+ * types for a `clrField` call can be found in the generated headers of ans1c
+ * for your specific type and field.
+ *
+ * Getting Fields
+ * --------------
+ *
+ * Getting specific fields' contents has a similar interface, through the
+ * `getField`, `getSeq` and `getView` functions.
+ *
+ * The `getField` function is used to obtain a C++ value from an asn1c
+ * primitive type. The `getSeq` function is used to obtain a copy of a nested
+ * structure. The `getView` function is used to obtain access to a nested
+ * structure without performing a copy.
+ *
+ * All functions require the C++ type (or your custom type for nested
+ * structures) that needs to be returned to you. All functions accept an
+ * additional `bool*` parameter that returns whether the value was returned
+ * successfully. This needs to be checked only for optional fields.
+ *
+ * ```
+ * // build and fill a seq variable
+ *
+ * auto x = asn1cpp::getField(seq->someInteger,      int);
+ * auto y = asn1cpp::getField(seq->someOtherInteger, unsigned);
+ * auto z = asn1cpp::getField(seq->someOtherInt,     long);
+ *
+ * auto str = asn1cpp::getField(seq->someString, std::string);
+ *
+ * bool ok;
+ * auto result = asn1cpp::getField(seq->optionalInt, int, &ok);
+ * if (ok)
+ *     do_work(result);
+ *
+ * auto copy = asn1cpp::getSeq(seq->nested, MyNestedType);
+ * auto view = asn1cpp::getView(seq->nested, MyNestedType);
+ * ```
+ */
+
+/**
+ * @def setField(field, V, ...)
+ * @ingroup API
+ * @brief Sets a value inside a field of an asn1cpp wrapper or element in SET OF/SEQUENCE OF.
+ *
+ * This macro takes a reference to the field you want to set and the value you
+ * want to set inside it. It returns a boolean indicating whether the setting
+ * process was performed correctly.
+ *
+ * This macro is also used to set elements inside SET OF or SEQUENCE OF fields.
+ * For these, the macro takes the input field, the value to set and the index
+ * of the item to set the value (0 based).
+ *
+ * This macro must be prefixed with the asn1cpp namespace to work.
+ */
 #define setField(field, V, ...) \
     setterField(field, V, ## __VA_ARGS__)
 
+/**
+ * @def clrField(field, V, ...)
+ * @ingroup API
+ * @brief Clears the value inside an optional field of an asn1cpp wrapper or the list of a SET OF/SEQUENCE OF.
+ *
+ * If used on non-optional field, this macro takes a reference to the field you
+ * want to set and the name of its asn1c type. The optional field is then
+ * cleared.
+ *
+ * If used on a SET OF or SEQUENCE OF field, it removes all items from their
+ * list. The asn1c type of the elements in the list must be speficied as the
+ * second input.
+ *
+ * This macro must be prefixed with the asn1cpp namespace to work.
+ */
 #define clrField(field, T, ...) \
     clearerField(field, &ASN1CPP_ASN1C_DEF(T), ## __VA_ARGS__)
 

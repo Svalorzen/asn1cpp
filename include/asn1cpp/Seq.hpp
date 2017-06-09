@@ -327,10 +327,15 @@ namespace asn1cpp {
  * @defgroup API
  * @brief Library public API
  *
- * This group contains all functions and macros which should be used by the
- * user in order to correctly use the library. Note that all macros should
- * still be prefaced by the correct namespace indicator, as they still refer
- * to namespaced functions.
+ * This group contains all free functions and macros which should be used by
+ * the user in order to correctly use the library. Note that all macros should
+ * still be prefaced by the correct namespace indicator, as they still refer to
+ * namespaced functions.
+ *
+ * In addition to the functions and macros referenced in this page, you should
+ * look at the documentation for asn1cpp::Seq and asn1cpp::View, which are the
+ * main ways that asn1cpp uses in order to manage memory and provide an easy
+ * way to access asn1c fields.
  *
  * @def makeSeq(T)
  * @ingroup API

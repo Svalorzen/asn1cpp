@@ -99,9 +99,34 @@ namespace asn1cpp {
     }
 }
 
-#define pushList(field, value, ...) \
-    adderElement(field, value, ## __VA_ARGS__)
+/**
+ * @def pushList(field, V, ...)
+ * @ingroup API
+ * @brief Inserts an element at the end of the input list for SET OF/SEQUENCE OF.
+ *
+ * Inserts at the end of the specified field a new element. The second input is
+ * the value of the new element. A boolean is returned to report whether the
+ * operation was successful.
+ *
+ * This macro must be prefixed with both the asn1cpp namespace and the
+ * namespace of the underlying list type (setof, sequenceof).
+ */
+#define pushList(field, V, ...) \
+    adderElement(field, V, ## __VA_ARGS__)
 
+/**
+ * @def popList(field, T, id, ...)
+ * @ingroup API
+ * @brief Removes an element from the input list for SET OF/SEQUENCE OF.
+ *
+ * This macro takes an input SET OF or SEQUENCE OF field, the asn1c type of the
+ * elements of the list and an integer id. The specified element is removed
+ * from the list. A boolean value is returned to report whether the operation
+ * was successful.
+ *
+ * This macro must be prefixed with both the asn1cpp namespace and the
+ * namespace of the underlying list type (setof, sequenceof).
+ */
 #define popList(field, T, id, ...) \
     removerElement(field, id, &ASN1CPP_ASN1C_DEF(T), ## __VA_ARGS__)
 

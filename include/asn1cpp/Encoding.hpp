@@ -101,11 +101,16 @@ namespace asn1cpp {
 /**
  * @page EncodingPage Encoding and Decoding with asn1cpp
  *
- * Encoding and decoding is done through the `encode` and `decode` functions.
+ * All functions described here can be found in the \ref API group.
+ *
  * Note that in asn1cpp some functions are macros due to the need to
  * automatically access the asn1c type descriptors from type names. This may
  * not play nice with your autocompletion features.
  *
+ * Encoding and Decoding
+ * ---------------------
+ *
+ * Encoding and decoding is done through the `encode` and `decode` functions.
  * Accessing a specific type of encoding/decoding is done through namespaces.
  * The `ber` namespace offers access to the `encode` and `decode` functions for
  * BER encoding, the `uper` namespaces does the same for UPER, and so on.

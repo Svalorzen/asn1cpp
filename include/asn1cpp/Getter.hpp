@@ -158,12 +158,60 @@ namespace asn1cpp {
     }
 }
 
+// For user documentation about the getter function, see the Setter.hpp file.
+
+/**
+ * @def getField(field, R, ...)
+ * @ingroup API
+ * @brief Gets a value from a field of an asn1cpp wrapper or element in SET OF/SEQUENCE OF.
+ *
+ * This macro must only be used for asn1c primitive types, not types you have
+ * defined.
+ *
+ * This macro takes a reference to the field you want to set and the C++ type
+ * name you want to extract from it. It accepts an optional boolean pointer
+ * parameter indicating whether the extraction process was successful, which is
+ * useful for optional fields.
+ *
+ * This macro is also used to get elements inside SET OF or SEQUENCE OF fields.
+ * For these, the macro takes the input field, the C++ type name you want to
+ * extract and the index of the item to get the value from (0 based). Once
+ * again a boolean pointer as last parameter is available although it is not
+ * that useful.
+ *
+ * This macro must be prefixed with the asn1cpp namespace to work.
+ */
 #define getField(field, R, ...) \
     getterField<R>(field, ## __VA_ARGS__)
 
+/**
+ * @def getSeq(field, R, ...)
+ * @ingroup API
+ * @brief Copies and wraps a non-primitive value from a field of an asn1cpp wrapper or element in SET OF/SEQUENCE OF.
+ *
+ * This macro must only be used for asn1c types you have defined, and not on
+ * asn1c primitive types.
+ *
+ * This macro copies the underlying field into a separate, memory-managed
+ * asn1cpp::Seq.
+ *
+ * This macro API is the same as the #getField macro.
+ */
 #define getSeq(field, R, ...) \
     getterSeq(field, &ASN1CPP_ASN1C_DEF(R), ## __VA_ARGS__)
 
+/**
+ * @def getView(field, R, ...)
+ * @ingroup API
+ * @brief Wraps a non-primitive value from a field of an asn1cpp wrapper or element in SET OF/SEQUENCE OF.
+ *
+ * This macro must only be used for asn1c types you have defined, and not on
+ * asn1c primitive types.
+ *
+ * This macro provides a asn1cpp::View on the underlying field.
+ *
+ * This macro API is the same as the #getField macro.
+ */
 #define getView(field, R, ...) \
     getterView(field, &ASN1CPP_ASN1C_DEF(R), ## __VA_ARGS__)
 
