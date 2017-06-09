@@ -23,7 +23,7 @@ namespace asn1cpp {
     }
 
     /**
-     * @brief This class wraps an asn1c non-primitive structure.
+     * @brief This class wraps and owns an asn1c non-primitive structure.
      *
      * This class is used to take ownership of asn1c structures so that they
      * can be manipulated without risking a memory leak. This class will
@@ -33,6 +33,10 @@ namespace asn1cpp {
      * through the appropriate helper functions found in the Setter/Getter
      * files. Avoid bypassing them and directly read stuff unless you know what
      * you are doing.
+     *
+     * This class cannot be used to contain asn1c primitive types, such as
+     * INTEGER_t, BOOLEAN_t, OCTET_STRING_t and so on. Those types can be read
+     * and set through the setField() and getField() functions.
      */
     template <typename T>
     class Seq {
@@ -325,7 +329,7 @@ namespace asn1cpp {
  *
  * @def makeSeq(T)
  * @brief Creates a Seq instance for the specified type.
- * 
+ *
  * This macro allows specifying the name of the underlying asn1c type, and it
  * will automatically find the appropriate asn1c type descriptor for you.
  *
