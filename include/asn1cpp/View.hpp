@@ -281,7 +281,7 @@ namespace asn1cpp {
              */
             View(T * p);
 
-            template <typename Check>
+            template <typename TT, typename Check>
             friend struct Impl::Setter;
 
             T * seq_;
