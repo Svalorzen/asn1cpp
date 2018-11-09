@@ -198,12 +198,12 @@ namespace asn1cpp {
  * @ingroup API
  * @brief Clears the value inside an optional field of an asn1cpp wrapper or the list of a SET OF/SEQUENCE OF.
  *
- * If used on non-optional field, this macro takes a reference to the field you
+ * If used on an optional field, this macro takes a reference to the field you
  * want to set and the name of its asn1c type. The optional field is then
  * cleared.
  *
  * If used on a SET OF or SEQUENCE OF field, it removes all items from their
- * list. The asn1c type of the elements in the list must be speficied as the
+ * list. The asn1c type of the elements in the list must be specified as the
  * second input.
  *
  * This macro must be prefixed with the asn1cpp namespace to work.
