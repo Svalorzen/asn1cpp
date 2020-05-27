@@ -20,10 +20,20 @@ namespace asn1cpp {
             return field.list.count;
         }
 
+        template <typename T>
+        int getSize(const T * const & field) {
+            if (!field) return -1;
+            return getSize(*field);
+        }
+
+        template <typename T>
+        int getSize(T * const & field) {
+            return getSize(const_cast<const T*>(field));
+        }
+
         template <typename R, typename T>
-        R getterField(const T& field, int id, bool *ok = nullptr)
-        {
-            if (id < 0 || id > getSize(field)) {
+        R getterField(const T& field, int id, bool *ok = nullptr) {
+            if (id < 0 || id >= getSize(field)) {
                 if (ok) *ok = false;
                 return R();
             }
@@ -31,10 +41,24 @@ namespace asn1cpp {
             return asn1cpp::getterField<R, typename Impl::ArrayType<T>::type>(*field.list.array[id], ok ? ok : &iok);
         }
 
+        template <typename R, typename T>
+        R getterField(const T* const & field, int id, bool *ok = nullptr) {
+            if (!field) {
+                if (ok) *ok = false;
+                return R();
+            }
+            return getterField<R>(*field, id, ok);
+        }
+
+        template <typename R, typename T>
+        R getterField(T* const & field, int id, bool *ok = nullptr) {
+            return getterField<R>(const_cast<const T*>(field), id, ok);
+        }
+
         template <typename T>
         Seq<typename Impl::ArrayType<T>::type> getterSeq(const T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
             using R = typename Impl::ArrayType<T>::type;
-            if (id < 0 || id > getSize(field)) {
+            if (id < 0 || id >= getSize(field)) {
                 if (ok) *ok = false;
                 return Seq<R>();
             }
@@ -45,7 +69,7 @@ namespace asn1cpp {
         template <typename T>
         View<const typename Impl::ArrayType<T>::type> getterView(const T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
             using R = const typename Impl::ArrayType<T>::type;
-            if (id < 0 || id > getSize(field)) {
+            if (id < 0 || id >= getSize(field)) {
                 if (ok) *ok = false;
                 return View<R>();
             }
@@ -56,7 +80,7 @@ namespace asn1cpp {
         template <typename T>
         View<typename Impl::ArrayType<T>::type> getterView(T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
             using R = typename Impl::ArrayType<T>::type;
-            if (id < 0 || id > getSize(field)) {
+            if (id < 0 || id >= getSize(field)) {
                 if (ok) *ok = false;
                 return View<R>();
             }
@@ -66,9 +90,16 @@ namespace asn1cpp {
 
         template <typename T, typename V>
         bool setterField(T & field, const V & value, int id) {
-            if (id < 0 || id > getSize(field))
+            if (id < 0 || id >= getSize(field))
                 return false;
-            return setterField(field.list.array[id], value);
+            return asn1cpp::setterField(field.list.array[id], value);
+        }
+
+        template <typename T, typename V>
+        bool setterField(T *& field, const V & value, int id) {
+            if (!field)
+                return false;
+            return setterField(*field, value, id);
         }
 
         template <typename T, typename V>
@@ -79,9 +110,15 @@ namespace asn1cpp {
             return asn_set_add(&field, ptr) == 0;
         }
 
+        template <typename T, typename V>
+        bool adderElement(T *& field, const V & value) {
+            if (!field) field = static_cast<T*>(calloc(1, sizeof(T)));
+            return adderElement(*field, value);
+        }
+
         template <typename T>
         bool removerElement(T & field, int id, asn_TYPE_descriptor_t * def) {
-            if (id < 0 || id > getSize(field))
+            if (id < 0 || id >= getSize(field))
                 return false;
 
             auto p = field.list.array[id];
@@ -90,11 +127,25 @@ namespace asn1cpp {
             return true;
         }
 
+        template <typename T, typename V>
+        bool removerElement(T *& field, const V & value) {
+            if (!field) return false;
+            return removerElement(*field, value);
+        }
+
         template <typename T>
         void clearerField(T & field, asn_TYPE_descriptor_t * def) {
             for (int i = 0; i < getSize(field); ++i)
                 def->free_struct(def, field.list.array[i], 0);
             field.list.count = 0;
+        }
+
+        template <typename T>
+        void clearerField(T *& field, asn_TYPE_descriptor_t * def) {
+            if (!field) return;
+            for (int i = 0; i < getSize(field); ++i)
+                def->free_struct(def, field->list.array[i], 0);
+            free(field);
         }
     }
 }

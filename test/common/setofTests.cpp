@@ -33,6 +33,26 @@ BOOST_AUTO_TEST_CASE( add_integer ) {
     BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 2), values[2]);
 }
 
+BOOST_AUTO_TEST_CASE( set_integer ) {
+    constexpr std::array<int, 3> values = {{5, 54, 190}};
+    constexpr int newValue = 778;
+
+    auto test = asn1cpp::makeSeq(TestSetOf);
+
+    BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[0]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[1]));
+    BOOST_CHECK(asn1cpp::setof::pushList(test->integer, values[2]));
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getSize(test->integer), 3);
+
+    BOOST_CHECK(asn1cpp::setof::setField(test->integer, newValue, 1));
+    BOOST_CHECK(!asn1cpp::setof::setField(test->integer, newValue, 3));
+
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 0), values[0]);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 1), newValue);
+    BOOST_CHECK_EQUAL(asn1cpp::setof::getField(test->integer, int, 2), values[2]);
+}
+
 BOOST_AUTO_TEST_CASE( remove_integer ) {
     constexpr std::array<int, 3> values = {{12, 23, 34}};
 

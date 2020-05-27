@@ -203,8 +203,9 @@ namespace asn1cpp {
  * cleared.
  *
  * If used on a SET OF or SEQUENCE OF field, it removes all items from their
- * list. The asn1c type of the elements in the list must be specified as the
- * second input.
+ * list. If the SET OF/SEQUENCE OF are also optional, they are too cleared. The
+ * asn1c type of the elements in the list must be specified as the second
+ * input.
  *
  * This macro must be prefixed with the asn1cpp namespace to work.
  */

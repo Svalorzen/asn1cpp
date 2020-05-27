@@ -42,7 +42,7 @@ namespace asn1cpp {
 
         template <typename T>
         bool removerElement(T & field, int id, asn_TYPE_descriptor_t * def) {
-            if (id < 0 || id > getSize(field))
+            if (id < 0 || id >= getSize(field))
                 return false;
 
             auto p = field.list.array[id];
@@ -50,6 +50,13 @@ namespace asn1cpp {
             asn_sequence_del(&field, id, 0);
             def->free_struct(def, p, 0);
             return true;
+        }
+
+        template <typename T>
+        bool removerElement(T *& field, int id, asn_TYPE_descriptor_t * def) {
+            if (!field) return false;
+
+            return removerElement(*field, id, def);
         }
 
         template <typename T>
