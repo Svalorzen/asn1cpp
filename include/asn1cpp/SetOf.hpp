@@ -13,6 +13,10 @@ namespace asn1cpp {
             struct ArrayType {
                 using type = typename std::remove_reference<decltype(**std::declval<T>().list.array)>::type;
             };
+            template <typename T>
+            struct ArrayType<T*> {
+                using type = typename std::remove_reference<decltype(**std::declval<T>().list.array)>::type;
+            };
         }
 
         template <typename T>
@@ -55,6 +59,8 @@ namespace asn1cpp {
             return getterField<R>(const_cast<const T*>(field), id, ok);
         }
 
+        // ### GETTER SEQ ###
+
         template <typename T>
         Seq<typename Impl::ArrayType<T>::type> getterSeq(const T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
             using R = typename Impl::ArrayType<T>::type;
@@ -65,6 +71,23 @@ namespace asn1cpp {
             bool iok;
             return asn1cpp::getterSeq(*field.list.array[id], def, ok ? ok : &iok);
         }
+
+        template <typename T>
+        Seq<typename Impl::ArrayType<T>::type> getterSeq(const T * const & field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
+            using R = typename Impl::ArrayType<T>::type;
+            if (!field) {
+                if (ok) *ok = false;
+                return Seq<R>();
+            }
+            return getterSeq(*field, def, id, ok);
+        }
+
+        template <typename T>
+        Seq<typename Impl::ArrayType<T>::type> getterSeq(T * const & field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
+            return getterSeq(const_cast<const T*>(field), def, id, ok);
+        }
+
+        // ### GETTER VIEW CONST ###
 
         template <typename T>
         View<const typename Impl::ArrayType<T>::type> getterView(const T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
@@ -78,6 +101,18 @@ namespace asn1cpp {
         }
 
         template <typename T>
+        View<const typename Impl::ArrayType<T>::type> getterView(const T * const & field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
+            using R = typename Impl::ArrayType<T>::type;
+            if (!field) {
+                if (ok) *ok = false;
+                return View<R>();
+            }
+            return getterView(*field, def, id, ok);
+        }
+
+        // ### GETTER VIEW NON-CONST ###
+
+        template <typename T>
         View<typename Impl::ArrayType<T>::type> getterView(T& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
             using R = typename Impl::ArrayType<T>::type;
             if (id < 0 || id >= getSize(field)) {
@@ -86,6 +121,16 @@ namespace asn1cpp {
             }
             bool iok;
             return asn1cpp::getterView(*field.list.array[id], def, ok ? ok : &iok);
+        }
+
+        template <typename T>
+        View<typename Impl::ArrayType<T>::type> getterView(T *& field, asn_TYPE_descriptor_t * def, int id, bool *ok = nullptr) {
+            using R = typename Impl::ArrayType<T>::type;
+            if (!field) {
+                if (ok) *ok = false;
+                return View<R>();
+            }
+            return getterView(*field, def, id, ok);
         }
 
         template <typename T, typename V>

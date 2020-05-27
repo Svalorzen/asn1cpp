@@ -37,7 +37,8 @@ TEST DEFINITIONS AUTOMATIC TAGS ::= BEGIN
         integer             INTEGER OPTIONAL,
         string              PrintableString OPTIONAL,
         boolean             BOOLEAN OPTIONAL,
-        sequence            SEQUENCE OF INTEGER OPTIONAL
+        sequence            SEQUENCE OF INTEGER OPTIONAL,
+        nested              SEQUENCE OF TestInteger OPTIONAL
     }
 
     TestSequenceOf ::= SEQUENCE

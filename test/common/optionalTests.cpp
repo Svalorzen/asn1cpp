@@ -4,6 +4,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "TestOptional.h"
+#include "TestInteger.h"
 
 #include "asn1cpp/Seq.hpp"
 #include "asn1cpp/Getter.hpp"
@@ -210,4 +211,28 @@ BOOST_AUTO_TEST_CASE( clear ) {
         BOOST_CHECK(!intOk);
     }
     BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getSize(test->sequence), -1);
+}
+
+BOOST_AUTO_TEST_CASE( add_nested ) {
+    auto insert0 = asn1cpp::makeSeq(TestInteger);
+    BOOST_CHECK(asn1cpp::setField(insert0->integer, 45));
+
+    auto seq = asn1cpp::makeSeq(TestInteger);
+    BOOST_CHECK(asn1cpp::setField(seq->integer, 23));
+    asn1cpp::View<TestInteger> insert1 = seq;
+
+    auto test = asn1cpp::makeSeq(TestOptional);
+
+    BOOST_CHECK(asn1cpp::sequenceof::pushList(test->nested, insert0));
+    BOOST_CHECK(asn1cpp::sequenceof::pushList(test->nested, insert1));
+
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getSize(test->nested), 2);
+
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getSeq(test->nested, TestInteger, 0), insert0);
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getView(test->nested, TestInteger, 0), insert0);
+
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getSeq(test->nested, TestInteger, 1), insert1);
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getView(test->nested, TestInteger, 1), insert1);
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getSeq(test->nested, TestInteger, 1), seq);
+    BOOST_CHECK_EQUAL(asn1cpp::sequenceof::getView(test->nested, TestInteger, 1), seq);
 }
