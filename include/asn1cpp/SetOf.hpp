@@ -190,7 +190,11 @@ namespace asn1cpp {
             if (!field) return;
             for (int i = 0; i < getSize(field); ++i)
                 def->free_struct(def, field->list.array[i], 0);
+
+            asn_set_empty(field);
             free(field);
+
+            field = nullptr;
         }
     }
 }

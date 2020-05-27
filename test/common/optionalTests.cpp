@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE( clear ) {
     asn1cpp::clrField(test->string, OCTET_STRING);
     asn1cpp::clrField(test->integer, INTEGER);
     asn1cpp::clrField(test->boolean, BOOLEAN);
-    asn1cpp::clrField(test->sequence, INTEGER);
+    asn1cpp::sequenceof::clrField(test->sequence, INTEGER);
 
     asn1cpp::getField(test->string, std::string, &strOk);
     asn1cpp::getField(test->integer, unsigned, &intOk);
