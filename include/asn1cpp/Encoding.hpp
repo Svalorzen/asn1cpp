@@ -6,9 +6,11 @@
 #include "asn_application.h"
 
 #include "asn1cpp/Utils.hpp"
-#include "asn1cpp/Seq.hpp"
 
 namespace asn1cpp {
+    template <typename T>
+    class Seq;
+
     namespace Impl {
         inline int fill(const void * buffer, size_t size, void * appKey) {
             std::string * str = static_cast<std::string*>(appKey);

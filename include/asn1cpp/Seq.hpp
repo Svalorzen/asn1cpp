@@ -9,19 +9,9 @@
 #include "asn_application.h"
 
 #include "asn1cpp/Utils.hpp"
+#include "asn1cpp/Encoding.hpp"
 
 namespace asn1cpp {
-    template <typename T>
-    class Seq;
-
-    namespace ber {
-        template <typename T, typename = typename std::enable_if<is_asn1_wrapper<T>::value>::type>
-        std::string encode(const T & m);
-
-        template <typename T>
-        Seq<T> decode(asn_TYPE_descriptor_t * def, const std::string & buffer);
-    }
-
     /**
      * @brief This class wraps and owns an asn1c non-primitive structure.
      *
